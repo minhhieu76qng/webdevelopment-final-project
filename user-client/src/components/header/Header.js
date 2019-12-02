@@ -6,7 +6,7 @@ import '../../assets/scss/Header.scss';
 
 const HeaderComp = () => {
   return (
-    <div className='header'>
+    <div className='header shadow'>
       <Navbar
         style={{
           backgroundColor: '#fff',

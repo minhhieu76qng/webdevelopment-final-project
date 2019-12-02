@@ -90,7 +90,7 @@ const SignUpComp = () => {
       {({ handleSubmit, handleChange, values, touched, errors }) => (
         <div className='form-wrapper'>
           <Row className='justify-content-center'>
-            <Col xs={12} sm={8} md={6} lg={4} style={{ maxWidth: 500 }}>
+            <Col xs={12} sm={10} md={8} lg={6} style={{ maxWidth: 500 }}>
               <Form noValidate className='form shadow' onSubmit={handleSubmit}>
                 <h3 className='form-title'>Get your free account</h3>
 
