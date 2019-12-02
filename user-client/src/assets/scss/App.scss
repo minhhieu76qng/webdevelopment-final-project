@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+
+$main-bg: #f2f2f2;
+$main-font-size: 14px;
+$main-font-weight: 400;
+$main-text-color: #000;
+$main-font: 'Roboto', sans-serif;
+
+$color-link: #162ec9;
+$color-link-highlight: #071ca8;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $main-font;
+  font-size: $main-font-size;
+  font-weight: $main-font-weight;
+  color: $main-text-color;
+  background-color: $main-bg;
+}
+
+.user-page {
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+
+    &:hover {
+      color: $color-link !important;
+    }
+
+    &.default-link {
+      color: $color-link;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .logo-page {
+    max-width: 200px;
+  }
+
+  .link {
+    display: inline-block;
+    padding: 7px 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .button-link {
+    background-color: $color-link;
+    border-radius: 3px;
+    color: #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+
+    &:hover {
+      color: #fff !important;
+      background-color: $color-link-highlight;
+      box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+    }
+  }
+}
