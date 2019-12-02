@@ -18,7 +18,7 @@ function validateString(field, message) {
 }
 
 module.exports = {
-  createNewUser: async function(data) {
+  createNewUser: async function (data) {
     if (
       !(
         data &&

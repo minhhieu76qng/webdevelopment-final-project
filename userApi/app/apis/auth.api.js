@@ -3,7 +3,7 @@ const httpCode = require("http-status-codes");
 const userService = require("../services/account.service");
 
 // create new user
-router.post("/sign-up", async (req, res, next) => {
+router.post("/sign-up", (req, res, next) => {
   const {
     firstName,
     lastName,
@@ -13,16 +13,21 @@ router.post("/sign-up", async (req, res, next) => {
     job
   } = req.body;
 
-  const result = await userService.createNewUser({
+  userService.createNewUser({
     firstName,
     lastName,
     email,
     password,
     confirmPassword,
     job
-  });
-
-  return res.status(httpCode.CREATED).json(result);
+  })
+    .then(result => {
+      return res.status(httpCode.CREATED).json(result);
+    })
+    .catch(err => {
+      console.log(err);
+      next(err);
+    })
 });
 
 module.exports = router;

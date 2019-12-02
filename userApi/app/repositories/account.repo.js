@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt");
+const httpCode = require('http-status-codes');
+const { ErrorHandler } = require('../helpers/error.helper');
 const { Account } = require("../models/account.model");
 const { SALT_ROUND } = require("../constance/account.constance");
 
 module.exports = {
-  add: async function(data, session = null) {
+  add: async function (data, session = null) {
     const accountObject = {
       local: {
         email: data.email,
@@ -20,6 +22,12 @@ module.exports = {
     accountObject.local.password = hash;
 
     const newAccount = new Account(accountObject);
-    return await newAccount.save({ session: session });
+    try {
+      return await newAccount.save({ session: session });
+    }
+    catch (err) {
+      throw new ErrorHandler(httpCode.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+      // throw err;
+    }
   }
 };

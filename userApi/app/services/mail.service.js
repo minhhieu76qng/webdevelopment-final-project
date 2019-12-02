@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const httpCode = require('http-status-codes');
+const { ErrorHandler } = require('../helpers/error.helper');
 
 class Mailer {
   constructor(user, pass) {
@@ -41,7 +43,7 @@ if (!(MAIL_USER && MAIL_PASSWORD)) {
 const mailer = new Mailer(MAIL_USER, MAIL_PASSWORD);
 
 module.exports = {
-  sendVerificationMail: function({ _id, email }) {
+  sendVerificationMail: async function ({ _id, email }) {
     const { JWTSECRET, VERIFIED_LINK } = process.env;
 
     const token = jwt.sign({ _id, email }, JWTSECRET);
@@ -53,6 +55,11 @@ module.exports = {
       html: `<p>Welcome to our website! Please click the below link to verify account!</p><a href="${link}">${link}</a>`
     };
 
-    return mailer.sendMail(email, content);
+    try {
+      return await mailer.sendMail(email, content);
+    }
+    catch (err) {
+      throw new ErrorHandler(httpCode.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+    }
   }
 };
