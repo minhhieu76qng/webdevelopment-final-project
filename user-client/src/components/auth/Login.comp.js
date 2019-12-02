@@ -10,17 +10,17 @@ import { faUser, faKey } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import '../../assets/scss/AuthForm.scss';
 
+const MESSAGE = {
+  required: 'Field is required',
+  email: 'Email is not valid',
+};
+
 const schema = yup.object({
   email: yup
     .string()
-    .required()
-    .email(),
-  password: yup
-    .string()
-    .required()
-    .min(6)
-    .trim()
-    .lowercase(),
+    .required(MESSAGE.required)
+    .email(MESSAGE.email),
+  password: yup.string().required(MESSAGE.required),
 });
 
 const LoginComp = () => {
