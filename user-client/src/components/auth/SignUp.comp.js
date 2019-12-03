@@ -8,11 +8,15 @@ import {
   Button,
   ButtonGroup,
 } from 'react-bootstrap';
+import { ToastContainer } from 'react-toastify';
+import Axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as yup from 'yup';
 import { Formik } from 'formik';
 import { faUser, faKey } from '@fortawesome/free-solid-svg-icons';
+
 import '../../assets/scss/AuthForm.scss';
+import { toast } from '../widgets/toast';
 
 const MESSAGE = {
   required: 'Field is required',
@@ -64,14 +68,33 @@ const JOB = {
 
 const SignUpComp = () => {
   const [job, setJob] = useState(null);
+  const [jobErr, setJobErr] = useState(false);
 
   const formSubmit = values => {
-    console.log(values);
+    if (!job) {
+      setJobErr('You must select the job you want.');
+      return;
+    }
+    Axios.post('/api/auth/sign-up', {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+      job,
+    })
+      .then(() => {
+        toast.success('Sign up successfull!');
+      })
+      .catch(err => {
+        toast.error(err.response.data.error.msg);
+      });
   };
 
   const onJobClick = jobValue => {
     if (jobValue === JOB.teacher || jobValue === JOB.student) {
       setJob(jobValue);
+      setJobErr(false);
     }
   };
 
@@ -88,7 +111,7 @@ const SignUpComp = () => {
       }}
     >
       {({ handleSubmit, handleChange, values, touched, errors }) => (
-        <div className='form-wrapper'>
+        <div className='form-wrapper' style={{ position: 'relative' }}>
           <Row className='justify-content-center'>
             <Col xs={12} sm={10} md={8} lg={6} style={{ maxWidth: 500 }}>
               <Form noValidate className='form shadow' onSubmit={handleSubmit}>
@@ -216,6 +239,13 @@ const SignUpComp = () => {
                       Work as a Teacher
                     </Button>
                   </ButtonGroup>
+                  {jobErr && (
+                    <div
+                      style={{ marginTop: 10, color: '#e74c3c', fontSize: 13 }}
+                    >
+                      {jobErr}
+                    </div>
+                  )}
                 </div>
 
                 <Button
@@ -247,6 +277,19 @@ const SignUpComp = () => {
               </Form>
             </Col>
           </Row>
+
+          <ToastContainer
+            position='top-right'
+            toastClassName='custom-toast'
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnVisibilityChange
+            draggable
+            pauseOnHover
+          />
         </div>
       )}
     </Formik>

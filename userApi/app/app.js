@@ -1,8 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
 const httpCode = require("http-status-codes");
+const cors = require("cors");
 require("./configs/mongoose.config");
-require('./configs/passport.config');
+require("./configs/passport.config");
 
 const { handleError } = require("./helpers/error.helper");
 
@@ -11,6 +12,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cors());
 
 app.get("/", (req, res, next) => {
   return res.status(200).json({
@@ -33,7 +35,7 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  // console.log(err);
   return handleError(err, res);
 });
 
