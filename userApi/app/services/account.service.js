@@ -5,7 +5,7 @@ const accountRepo = require("../repositories/account.repo");
 const teacherRepo = require("../repositories/teacher.repo");
 const mailService = require("./mail.service");
 const { ErrorHandler } = require("../helpers/error.helper");
-const { isEmail } = require("../helpers/account.helper");
+const { isEmail, generateToken } = require("../helpers/account.helper");
 const {
   MIN_LENGTH_PASSWORD,
   ROLES
@@ -68,7 +68,7 @@ module.exports = {
     try {
 
       // checking email
-      const isExist = await accountRepo.findByEmail(data.email);
+      const isExist = await this.findByEmail(data.email);
 
       if (isExist) {
         throw new ErrorHandler(httpCode.CONFLICT, 'Email is already taken.');
@@ -100,6 +100,27 @@ module.exports = {
       await _session.abortTransaction();
       _session.endSession();
       throw err;
+    }
+  },
+
+  findByEmail: async function (email) {
+    return await accountRepo.findByEmail(email);
+  },
+
+  login: function (account) {
+
+    if (!account.isVerified) {
+      throw new ErrorHandler(httpCode.UNAUTHORIZED, 'Account is not verified.');
+    }
+
+    let temp = Object.assign({}, account);
+
+    delete temp._doc.local.password;
+
+    const token = generateToken(temp._doc, { expiresIn: '1d' });
+
+    return {
+      token
     }
   }
 };

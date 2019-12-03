@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const httpCode = require("http-status-codes");
 require("./configs/mongoose.config");
+require('./configs/passport.config');
 
 const { handleError } = require("./helpers/error.helper");
 
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err);
   return handleError(err, res);
 });
 

@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const httpCode = require('http-status-codes');
 const { ErrorHandler } = require('../helpers/error.helper');
+const { generateToken } = require('../helpers/account.helper');
 
 class Mailer {
   constructor(user, pass) {
@@ -46,7 +47,7 @@ module.exports = {
   sendVerificationMail: async function ({ _id, email }) {
     const { JWTSECRET, VERIFIED_LINK } = process.env;
 
-    const token = jwt.sign({ _id, email }, JWTSECRET);
+    const token = generateToken({ _id, email });
 
     const link = `${VERIFIED_LINK}/active-account?token=${token}`;
 
