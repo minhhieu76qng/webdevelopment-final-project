@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import {
   Row,
   Col,
@@ -7,6 +7,7 @@ import {
   InputGroup,
   Button,
   ButtonGroup,
+  Spinner,
 } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import Axios from 'axios';
@@ -70,7 +71,9 @@ const SignUpComp = () => {
   const [job, setJob] = useState(null);
   const [jobErr, setJobErr] = useState(false);
 
-  const formSubmit = values => {
+  const history = useHistory();
+
+  const formSubmit = (values, setSubmitting) => {
     if (!job) {
       setJobErr('You must select the job you want.');
       return;
@@ -85,9 +88,16 @@ const SignUpComp = () => {
     })
       .then(() => {
         toast.success('Sign up successfull!');
+        // settimeout -> redirect to login
+        setTimeout(function() {
+          history.push('/login');
+        }, 2500);
       })
       .catch(err => {
         toast.error(err.response.data.error.msg);
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
   };
 
@@ -101,7 +111,8 @@ const SignUpComp = () => {
   return (
     <Formik
       validationSchema={schema}
-      onSubmit={formSubmit}
+      onSubmit={(values, { setSubmitting }) =>
+        formSubmit(values, setSubmitting)}
       initialValues={{
         firstName: '',
         lastName: '',
@@ -110,7 +121,14 @@ const SignUpComp = () => {
         confirmPassword: '',
       }}
     >
-      {({ handleSubmit, handleChange, values, touched, errors }) => (
+      {({
+        handleSubmit,
+        handleChange,
+        values,
+        touched,
+        errors,
+        isSubmitting,
+      }) => (
         <div className='form-wrapper' style={{ position: 'relative' }}>
           <Row className='justify-content-center'>
             <Col xs={12} sm={10} md={8} lg={6} style={{ maxWidth: 500 }}>
@@ -253,8 +271,13 @@ const SignUpComp = () => {
                   block
                   className='button-link mb-3'
                   size='sm'
+                  disabled={isSubmitting}
                 >
-                  Create My Account
+                  {isSubmitting ? (
+                    <Spinner size='sm' animation='border' />
+                  ) : (
+                    'Create My Account'
+                  )}
                 </Button>
 
                 <div
