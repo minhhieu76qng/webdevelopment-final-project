@@ -29,5 +29,14 @@ module.exports = {
       throw new ErrorHandler(httpCode.INTERNAL_SERVER_ERROR, 'Internal Server Error');
       // throw err;
     }
+  },
+
+  findByEmail: async function (email) {
+    try {
+      return await Account.findOne({ 'local.email': email });
+    }
+    catch (err) {
+      throw new ErrorHandler(httpCode.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+    }
   }
 };

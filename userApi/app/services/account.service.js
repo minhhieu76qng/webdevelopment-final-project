@@ -62,16 +62,24 @@ module.exports = {
     }
 
     // save user
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    const _session = await mongoose.startSession();
+    _session.startTransaction();
 
     try {
-      const account = await accountRepo.add(data, session);
+
+      // checking email
+      const isExist = await accountRepo.findByEmail(data.email);
+
+      if (isExist) {
+        throw new ErrorHandler(httpCode.CONFLICT, 'Email is already taken.');
+      }
+
+      const account = await accountRepo.add(data, _session);
 
       if (data.job === ROLES.teacher) {
         const teacher = await teacherRepo.add(
           { accountId: account._id },
-          session
+          _session
         );
       }
 
@@ -81,16 +89,16 @@ module.exports = {
         email: account.local.email
       });
 
-      await session.commitTransaction();
-      session.endSession();
+      await _session.commitTransaction();
+      _session.endSession();
 
       return {
         _id: account._id,
         name: account.name
       };
     } catch (err) {
-      await session.abortTransaction();
-      session.endSession();
+      await _session.abortTransaction();
+      _session.endSession();
       throw err;
     }
   }
