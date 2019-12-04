@@ -8,6 +8,9 @@ import LoginComp from './components/auth/Login.comp';
 import DefaultRoute from './routes/DefaultRoute';
 import SignUpComp from './components/auth/SignUp.comp';
 import './middlewares/axios.mdw';
+import ProtectedRoute from './routes/ProtectedRoute';
+import StudentRoute from './routes/StudentRoute';
+import TeacherRoute from './routes/TeacherRoute';
 
 function App() {
   return (
@@ -21,12 +24,21 @@ function App() {
           <SignUpComp />
         </DefaultRoute>
 
-        <DefaultRoute exact path='/'>
-          home
-        </DefaultRoute>
+        <ProtectedRoute path='/account'>user</ProtectedRoute>
+
+        <StudentRoute path='/cat/:catName'>
+          view category with catName
+        </StudentRoute>
+
+        <TeacherRoute path='/t'>teacher</TeacherRoute>
+
+        <StudentRoute exact path='/'>
+          student home
+        </StudentRoute>
 
         <DefaultRoute path='*'>no route</DefaultRoute>
       </Switch>
+
       <ToastContainer
         position='top-right'
         toastClassName='custom-toast'

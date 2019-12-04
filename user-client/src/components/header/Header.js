@@ -6,6 +6,7 @@ import '../../assets/scss/Header.scss';
 import TokenStorage from '../../utils/TokenStorage';
 import avatarImg from '../../assets/imgs/avatar.jpg';
 import CustomToggle from '../widgets/DropdownToggle';
+import ROLE from '../../constance/Role';
 
 const HeaderComp = () => {
   const history = useHistory();
@@ -62,11 +63,13 @@ const HeaderComp = () => {
                 </>
               )}
 
-              <Nav.Item className='nav-item'>
-                <Link to='/new-job' className='button-link link'>
-                  Post a job
-                </Link>
-              </Nav.Item>
+              {(!account || (account && account.role === ROLE.student)) && (
+                <Nav.Item className='nav-item'>
+                  <Link to='/new-job' className='button-link link'>
+                    Post a job
+                  </Link>
+                </Nav.Item>
+              )}
               {account && (
                 <Nav.Item>
                   <Dropdown drop='down' className='custom-dropdown-menu'>
@@ -103,29 +106,31 @@ const HeaderComp = () => {
         </Container>
       </div>
 
-      <div>
-        <Container>
-          <Navbar expand='md'>
-            <Navbar.Toggle aria-controls='basic-navbar-nav' />
-            <Navbar.Collapse id='basic-navbar-nav'>
-              <Nav className='main-navbar'>
-                <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                  Primary School
-                </Nav.Link>
-                <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                  Primary School
-                </Nav.Link>
-                <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                  Primary School
-                </Nav.Link>
-                <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                  Primary School
-                </Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
-          </Navbar>
-        </Container>
-      </div>
+      {(!account || (account && account.role === ROLE.student)) && (
+        <div>
+          <Container>
+            <Navbar expand='md'>
+              <Navbar.Toggle aria-controls='basic-navbar-nav' />
+              <Navbar.Collapse id='basic-navbar-nav'>
+                <Nav className='main-navbar'>
+                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
+                    Primary School
+                  </Nav.Link>
+                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
+                    Primary School
+                  </Nav.Link>
+                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
+                    Primary School
+                  </Nav.Link>
+                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
+                    Primary School
+                  </Nav.Link>
+                </Nav>
+              </Navbar.Collapse>
+            </Navbar>
+          </Container>
+        </div>
+      )}
     </header>
   );
 };
