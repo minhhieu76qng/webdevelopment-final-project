@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import {
   Row,
@@ -9,7 +9,6 @@ import {
   ButtonGroup,
   Spinner,
 } from 'react-bootstrap';
-import { ToastContainer } from 'react-toastify';
 import Axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as yup from 'yup';
@@ -18,6 +17,7 @@ import { faUser, faKey } from '@fortawesome/free-solid-svg-icons';
 
 import '../../assets/scss/AuthForm.scss';
 import { toast } from '../widgets/toast';
+import TokenStorage from '../../utils/TokenStorage';
 
 const MESSAGE = {
   required: 'Field is required',
@@ -73,6 +73,12 @@ const SignUpComp = () => {
 
   const history = useHistory();
 
+  useEffect(() => {
+    if (TokenStorage.isValid()) {
+      history.push('/');
+    }
+  }, [history]);
+
   const formSubmit = (values, setSubmitting) => {
     if (!job) {
       setJobErr('You must select the job you want.');
@@ -89,7 +95,7 @@ const SignUpComp = () => {
       .then(() => {
         toast.success('Sign up successfull!');
         // settimeout -> redirect to login
-        setTimeout(function() {
+        setTimeout(() => {
           history.push('/login');
         }, 2500);
       })
@@ -300,19 +306,6 @@ const SignUpComp = () => {
               </Form>
             </Col>
           </Row>
-
-          <ToastContainer
-            position='top-right'
-            toastClassName='custom-toast'
-            autoClose={2000}
-            hideProgressBar
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnVisibilityChange
-            draggable
-            pauseOnHover
-          />
         </div>
       )}
     </Formik>

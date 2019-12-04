@@ -95,3 +95,21 @@ body {
   border-radius: 3px;
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
 }
+
+.avatar {
+  max-width: 30px;
+  max-height: 30px;
+  display: inline-block;
+}
+.custom-dropdown-menu {
+  a {
+    cursor: pointer;
+    display: block;
+  }
+}
+
+.reset-button {
+  outline: none;
+  background-color: transparent;
+  border: none;
+}

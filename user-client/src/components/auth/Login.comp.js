@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col, Form, InputGroup, Button } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { Row, Col, Form, InputGroup, Button, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactFacebookLogin from 'react-facebook-login';
 import ReactGoogleLogin from 'react-google-login';
@@ -9,6 +9,9 @@ import { Formik } from 'formik';
 import { faUser, faKey } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import '../../assets/scss/AuthForm.scss';
+import Axios from 'axios';
+import TokenStorage from '../../utils/TokenStorage';
+import { toast } from '../widgets/toast';
 
 const MESSAGE = {
   required: 'Field is required',
@@ -24,20 +27,54 @@ const schema = yup.object({
 });
 
 const LoginComp = () => {
-  const formSubmit = values => {
-    console.log(values);
+  const history = useHistory();
+  useEffect(() => {
+    if (TokenStorage.isValid()) {
+      history.push('/');
+    }
+  }, [history]);
+
+  const formSubmit = (values, setSubmitting) => {
+    Axios.post('/api/auth/login', {
+      email: values.email,
+      password: values.password,
+    })
+      .then(({ data: { token } }) => {
+        TokenStorage.set(token);
+        history.push('/');
+      })
+      .catch(
+        ({
+          response: {
+            data: { error },
+          },
+        }) => {
+          toast.error(error.msg);
+        },
+      )
+      .finally(() => {
+        setSubmitting(false);
+      });
   };
 
   return (
     <Formik
       validationSchema={schema}
-      onSubmit={formSubmit}
+      onSubmit={(values, { setSubmitting }) =>
+        formSubmit(values, setSubmitting)}
       initialValues={{
         email: '',
         password: '',
       }}
     >
-      {({ handleSubmit, handleChange, values, touched, errors }) => (
+      {({
+        handleSubmit,
+        handleChange,
+        values,
+        touched,
+        errors,
+        isSubmitting,
+      }) => (
         <div className='form-wrapper'>
           <Row className='justify-content-center'>
             <Col xs={12} sm={10} md={8} lg={6} style={{ maxWidth: 500 }}>
@@ -90,7 +127,11 @@ const LoginComp = () => {
                   className='button-link mb-3'
                   size='sm'
                 >
-                  Log In
+                  {isSubmitting ? (
+                    <Spinner size='sm' animation='border' />
+                  ) : (
+                    'Log In'
+                  )}
                 </Button>
 
                 <div

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const tokenText = 'token-hj2rbv25';
+const tokenText = 'token_web_nc';
 export default {
   get() {
     return localStorage.getItem(tokenText);
@@ -21,7 +21,7 @@ export default {
     }
     const account = jwt.decode(token);
 
-    if (Date.now() > account.exp) {
+    if (Math.ceil(Date.now() / 1000) > account.exp) {
       this.remove();
       return null;
     }

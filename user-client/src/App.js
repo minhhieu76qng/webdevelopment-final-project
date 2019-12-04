@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import './assets/scss/App.scss';
@@ -26,6 +27,18 @@ function App() {
 
         <DefaultRoute path='*'>no route</DefaultRoute>
       </Switch>
+      <ToastContainer
+        position='top-right'
+        toastClassName='custom-toast'
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnVisibilityChange
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }
