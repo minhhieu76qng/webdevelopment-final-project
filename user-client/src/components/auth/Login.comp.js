@@ -1,6 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Row, Col, Form, InputGroup, Button, Spinner } from 'react-bootstrap';
+import {
+  Row,
+  Col,
+  Form,
+  InputGroup,
+  Button,
+  Spinner,
+  Modal,
+  ButtonGroup,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactFacebookLogin from 'react-facebook-login';
 import ReactGoogleLogin from 'react-google-login';
@@ -12,6 +21,7 @@ import '../../assets/scss/AuthForm.scss';
 import Axios from 'axios';
 import TokenStorage from '../../utils/TokenStorage';
 import { toast } from '../widgets/toast';
+import JOB from '../../constance/Role';
 
 const MESSAGE = {
   required: 'Field is required',
@@ -28,6 +38,11 @@ const schema = yup.object({
 
 const LoginComp = () => {
   const history = useHistory();
+
+  const [userJob, setUserJob] = useState(null);
+  const [socialLogin, setSocialLogin] = useState({ type: null, token: null });
+  const [showJobModal, setShowJobModal] = useState(false);
+
   useEffect(() => {
     if (TokenStorage.isValid()) {
       history.push('/');
@@ -57,6 +72,69 @@ const LoginComp = () => {
       });
   };
 
+  const loginWithGoogle = () => {
+    Axios.post('/api/auth/oauth/google', {
+      access_token: socialLogin.token,
+      job: userJob,
+    })
+      .then(({ data: { token } }) => {
+        TokenStorage.set(token);
+        history.push('/');
+      })
+      .catch(err => {
+        toast.error(err.response.data.error.msg);
+      });
+  };
+
+  const responseGoogle = response => {
+    console.log(response);
+    if (response) {
+      const { accessToken } = response;
+      setSocialLogin({ type: 'google', token: accessToken });
+
+      console.log(accessToken);
+
+      // check exist user
+      Axios.get('/api/auth/oauth/google/is-available', {
+        access_token: accessToken,
+      })
+        .then(({ data: { isExist } }) => {
+          if (!isExist) {
+            // show ra panel chon job
+            setShowJobModal(true);
+          } else {
+            loginWithGoogle();
+          }
+        })
+        .catch(err => {
+          toast.error(err.response.data.error.msg);
+        });
+    }
+  };
+
+  const responseFacebook = response => {
+    console.log(response);
+  };
+
+  const onJobClick = job => {
+    setShowJobModal(false);
+    if (job === JOB.student || job === JOB.teacher) {
+      setUserJob(job);
+      switch (socialLogin.type) {
+        case 'google':
+          loginWithGoogle();
+          break;
+        case 'facebook':
+          break;
+        default:
+      }
+    }
+  };
+
+  const {
+    REACT_APP_GOOGLE_CLIENT_ID,
+    REACT_APP_FACEBOOK_CLIENT_ID,
+  } = process.env;
   return (
     <Formik
       validationSchema={schema}
@@ -156,11 +234,19 @@ const LoginComp = () => {
                 <hr style={{ margin: '20px 0' }} />
                 <div className='social-login'>
                   <ReactFacebookLogin
+                    appId={REACT_APP_FACEBOOK_CLIENT_ID}
+                    autoLoad={false}
                     icon='fa-facebook'
                     cssClass='btn btn-primary btn-sm facebook-button'
                     textButton='Login with Facebook'
+                    fields='name,email,picture'
+                    callback={responseFacebook}
                   />
                   <ReactGoogleLogin
+                    clientId={REACT_APP_GOOGLE_CLIENT_ID}
+                    onSuccess={responseGoogle}
+                    onFailure={responseGoogle}
+                    cookiePolicy='single_host_origin'
                     render={props => (
                       <Button
                         size='sm'
@@ -178,6 +264,35 @@ Login with Google
               </Form>
             </Col>
           </Row>
+
+          <Modal
+            centered
+            show={showJobModal}
+            onHide={() => setShowJobModal(false)}
+            aria-labelledby='example-modal-sizes-title-sm'
+          >
+            <Modal.Header closeButton>
+              <Modal.Title id='example-modal-sizes-title-sm'>
+                I want to
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className='text-center'>
+              <ButtonGroup className='job-buttons'>
+                <Button
+                  className='button-link'
+                  onClick={() => onJobClick(JOB.student)}
+                >
+                  Find a Teacher
+                </Button>
+                <Button
+                  className='button-link'
+                  onClick={() => onJobClick(JOB.teacher)}
+                >
+                  Work as a Teacher
+                </Button>
+              </ButtonGroup>
+            </Modal.Body>
+          </Modal>
         </div>
       )}
     </Formik>
