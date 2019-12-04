@@ -31,9 +31,30 @@ module.exports = {
     }
   },
 
+  addSocialAccount: async function (account, session = null) {
+    account.isVerified = true;
+    const newAccount = new Account(account);
+    try {
+      return await newAccount.save({ session: session });
+    }
+    catch (err) {
+      throw new ErrorHandler(httpCode.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+      // throw err;
+    }
+  },
+
   findByEmail: async function (email) {
     try {
       return await Account.findOne({ 'local.email': email });
+    }
+    catch (err) {
+      throw new ErrorHandler(httpCode.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+    }
+  },
+
+  findWithGoogleId: async function (googleId) {
+    try {
+      return await Account.findOne({ 'google.id': googleId });
     }
     catch (err) {
       throw new ErrorHandler(httpCode.INTERNAL_SERVER_ERROR, 'Internal Server Error');

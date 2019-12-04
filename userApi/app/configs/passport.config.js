@@ -1,6 +1,7 @@
 const passport = require('passport');
 const _ = require('lodash');
 const LocalStrategy = require('passport-local').Strategy;
+const GoogleOAuthStrategy = require('passport-google-plus-token');
 const accountService = require('../services/account.service');
 const accountHelper = require('../helpers/account.helper');
 
@@ -34,4 +35,26 @@ const LS = new LocalStrategy({
   }
 })
 
+
+const googleOAuth = new GoogleOAuthStrategy({
+  clientID: '709935789644-953hmsleu2k05fsvoie4faj7alpnb2g6.apps.googleusercontent.com',
+  clientSecret: '_NefM9qNc_ISfN0_3SpuTR5h',
+}, async function (accessToken, refreshToken, profile, done) {
+  const account = {
+    google: {
+      id: profile.id,
+      email: profile.emails[0].value
+    },
+    name: {
+      firstName: profile.name.givenName,
+      lastName: profile.name.familyName
+    },
+    avatar: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null,
+  }
+
+  return done(null, account);
+})
+
 passport.use(LS);
+
+passport.use('googleOAuth', googleOAuth);

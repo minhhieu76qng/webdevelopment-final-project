@@ -92,10 +92,53 @@ module.exports = {
       await _session.commitTransaction();
       _session.endSession();
 
-      return {
-        _id: account._id,
-        name: account.name
-      };
+      return account;
+    } catch (err) {
+      await _session.abortTransaction();
+      _session.endSession();
+      throw err;
+    }
+  },
+
+  createNewSocialAccount: async function (accountData) {
+    if (!(accountData.name && accountData.name.firstName && accountData.name.lastName)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, 'Missing name.');
+    }
+
+    if (!(accountData.google || accountData.facebook)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, 'Missing social account information.');
+    }
+
+    if (accountData.google && !(accountData.google.id || accountData.google.email)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, 'Missing Google id or Google email.');
+    }
+
+    if (accountData.facebook && !(accountData.facebook.id || accountData.facebook.email)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, 'Missing Facebook id or Facebook email.');
+    }
+
+    if (!(accountData.role === ROLES.student || accountData.role === ROLES.teacher)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Job is not valid.");
+    }
+
+    // save user
+    const _session = await mongoose.startSession();
+    _session.startTransaction();
+
+    try {
+      const newAccount = await accountRepo.addSocialAccount(accountData, _session);
+
+      if (accountData.role === ROLES.teacher) {
+        const teacher = await teacherRepo.add(
+          { accountId: newAccount._id },
+          _session
+        );
+      }
+
+      await _session.commitTransaction();
+      _session.endSession();
+
+      return newAccount;
     } catch (err) {
       await _session.abortTransaction();
       _session.endSession();
@@ -108,6 +151,12 @@ module.exports = {
   },
 
   login: function (account) {
+
+    console.log(account);
+
+    if (!(account.role === ROLES.student || account.role === ROLES.teacher)) {
+      throw new ErrorHandler(httpCode.NOT_FOUND, 'Account type is not valid.');
+    }
 
     if (!account.isVerified) {
       throw new ErrorHandler(httpCode.UNAUTHORIZED, 'Account is not verified.');
@@ -122,5 +171,13 @@ module.exports = {
     return {
       token
     }
+  },
+
+  findWithFacebookId: function (facebookId) {
+
+  },
+
+  findWithGoogleId: async function (googleId) {
+    return await accountRepo.findWithGoogleId(googleId);
   }
 };
