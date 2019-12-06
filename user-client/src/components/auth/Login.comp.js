@@ -39,7 +39,6 @@ const schema = yup.object({
 const LoginComp = () => {
   const history = useHistory();
 
-  const [userJob, setUserJob] = useState(null);
   const [socialLogin, setSocialLogin] = useState({ type: null, token: null });
   const [showJobModal, setShowJobModal] = useState(false);
 
@@ -72,57 +71,46 @@ const LoginComp = () => {
       });
   };
 
-  const loginWithGoogle = () => {
-    Axios.post('/api/auth/oauth/google', {
-      access_token: socialLogin.token,
-      job: userJob,
-    })
-      .then(({ data: { token } }) => {
-        TokenStorage.set(token);
+  const loginWithGoogle = (token, job = null) => {
+    const reqBodyObj = {
+      token,
+    };
+    if (job !== null && (job === JOB.student || job === JOB.teacher)) {
+      reqBodyObj.job = job;
+    }
+    Axios.post('/api/auth/oauth/google', reqBodyObj)
+      .then(({ data }) => {
+        if (data.isExist === false) {
+          setShowJobModal(true);
+          return;
+        }
+        TokenStorage.set(data.token);
         history.push('/');
       })
       .catch(err => {
-        toast.error(err.response.data.error.msg);
+        if (err.response.data.error) {
+          toast.error(err.response.data.error.msg);
+        }
       });
   };
 
   const responseGoogle = response => {
-    console.log(response);
-    if (response) {
+    if (response && !response.error) {
       const { accessToken } = response;
       setSocialLogin({ type: 'google', token: accessToken });
 
-      console.log(accessToken);
-
-      // check exist user
-      Axios.get('/api/auth/oauth/google/is-available', {
-        access_token: accessToken,
-      })
-        .then(({ data: { isExist } }) => {
-          if (!isExist) {
-            // show ra panel chon job
-            setShowJobModal(true);
-          } else {
-            loginWithGoogle();
-          }
-        })
-        .catch(err => {
-          toast.error(err.response.data.error.msg);
-        });
+      loginWithGoogle(accessToken);
     }
   };
 
-  const responseFacebook = response => {
-    console.log(response);
-  };
+  const responseFacebook = () => {};
 
   const onJobClick = job => {
     setShowJobModal(false);
     if (job === JOB.student || job === JOB.teacher) {
-      setUserJob(job);
       switch (socialLogin.type) {
         case 'google':
-          loginWithGoogle();
+          loginWithGoogle(socialLogin.token, job);
           break;
         case 'facebook':
           break;

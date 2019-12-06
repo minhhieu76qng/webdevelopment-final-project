@@ -1,7 +1,7 @@
 const passport = require("passport");
 const _ = require("lodash");
 const LocalStrategy = require("passport-local").Strategy;
-const GoogleOAuthStrategy = require("passport-google-plus-token");
+const GoogleOAuthStrategy = require("passport-google-token").Strategy;
 const accountService = require("../services/account.service");
 const accountHelper = require("../helpers/account.helper");
 
@@ -45,19 +45,17 @@ const googleOAuth = new GoogleOAuthStrategy(
     clientSecret: GOOGLE_CLIENT_SECRET
   },
   async function(accessToken, refreshToken, profile, done) {
+    const jsonData = profile._json;
     const account = {
       google: {
-        id: profile.id,
-        email: profile.emails[0].value
+        id: jsonData.id,
+        email: jsonData.email
       },
       name: {
-        firstName: profile.name.givenName,
-        lastName: profile.name.familyName
+        firstName: jsonData.given_name,
+        lastName: jsonData.family_name
       },
-      avatar:
-        profile.photos && profile.photos.length > 0
-          ? profile.photos[0].value
-          : null
+      avatar: jsonData.picture
     };
 
     return done(null, account);
