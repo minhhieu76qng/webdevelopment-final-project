@@ -1,0 +1,19 @@
+.login-form {
+  position: relative;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  &:after {
+    content: '';
+    background: url('../imgs/Sweet-HD-Wallpapers-For-Classroom.jpg') no-repeat;
+    background-size: cover;
+    opacity: 0.9;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+  }
+}
