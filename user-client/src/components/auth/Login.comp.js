@@ -28,6 +28,11 @@ const MESSAGE = {
   email: 'Email is not valid',
 };
 
+const SocialType = {
+  google: 'google',
+  facebook: 'facebook',
+};
+
 const schema = yup.object({
   email: yup
     .string()
@@ -71,14 +76,14 @@ const LoginComp = () => {
       });
   };
 
-  const loginWithGoogle = (token, job = null) => {
+  const loginWithSocial = (socialType, token, job) => {
     const reqBodyObj = {
-      token,
+      access_token: token,
     };
     if (job !== null && (job === JOB.student || job === JOB.teacher)) {
       reqBodyObj.job = job;
     }
-    Axios.post('/api/auth/oauth/google', reqBodyObj)
+    Axios.post(`/api/auth/oauth/${socialType}`, reqBodyObj)
       .then(({ data }) => {
         if (data.isExist === false) {
           setShowJobModal(true);
@@ -97,22 +102,31 @@ const LoginComp = () => {
   const responseGoogle = response => {
     if (response && !response.error) {
       const { accessToken } = response;
-      setSocialLogin({ type: 'google', token: accessToken });
+      setSocialLogin({ type: SocialType.google, token: accessToken });
 
-      loginWithGoogle(accessToken);
+      loginWithSocial(SocialType.google, accessToken);
     }
   };
 
-  const responseFacebook = () => {};
+  const responseFacebook = response => {
+    console.log(response);
+    if (response && response.status !== 'unknown') {
+      const { accessToken } = response;
+      setSocialLogin({ type: SocialType.facebook, token: accessToken });
+
+      loginWithSocial(SocialType.facebook, accessToken);
+    }
+  };
 
   const onJobClick = job => {
     setShowJobModal(false);
     if (job === JOB.student || job === JOB.teacher) {
       switch (socialLogin.type) {
-        case 'google':
-          loginWithGoogle(socialLogin.token, job);
+        case SocialType.google:
+          loginWithSocial(SocialType.google, socialLogin.token, job);
           break;
-        case 'facebook':
+        case SocialType.facebook:
+          loginWithSocial(SocialType.facebook, socialLogin.token, job);
           break;
         default:
       }
@@ -223,7 +237,7 @@ const LoginComp = () => {
                 <div className='social-login'>
                   <ReactFacebookLogin
                     appId={REACT_APP_FACEBOOK_CLIENT_ID}
-                    autoLoad={false}
+                    // autoLoad={true}
                     icon='fa-facebook'
                     cssClass='btn btn-primary btn-sm facebook-button'
                     textButton='Login with Facebook'

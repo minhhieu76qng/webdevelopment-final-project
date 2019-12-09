@@ -22,6 +22,6 @@ router.post("/login", authService.loginWithLocal);
 
 router.post("/oauth/google", authService.loginWithGoogle);
 
-// router.post('/oauth/google/is-available', authService.isAvailableGoogleAccount);
+router.post("/oauth/facebook", authService.loginWithFacebook);
 
 module.exports = router;

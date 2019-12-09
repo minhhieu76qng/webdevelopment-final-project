@@ -2,12 +2,18 @@ const passport = require("passport");
 const _ = require("lodash");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleOAuthStrategy = require("passport-google-token").Strategy;
+const FacebookOAuthStrategy = require("passport-facebook-token");
 const accountService = require("../services/account.service");
 const accountHelper = require("../helpers/account.helper");
 
 passport.initialize();
 
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  FACEBOOK_CLIENT_ID,
+  FACEBOOK_CLIENT_SECRET
+} = process.env;
 
 const LS = new LocalStrategy(
   {
@@ -62,6 +68,36 @@ const googleOAuth = new GoogleOAuthStrategy(
   }
 );
 
+const facebookOAuth = new FacebookOAuthStrategy(
+  {
+    clientID: FACEBOOK_CLIENT_ID,
+    clientSecret: FACEBOOK_CLIENT_SECRET
+  },
+  async function(accessToken, refreshToken, profile, done) {
+    const jsonData = profile._json;
+    const account = {
+      facebook: {
+        id: jsonData.id,
+        email: jsonData.email
+      },
+      name: {
+        firstName: jsonData.first_name,
+        lastName: `${jsonData.last_name}${
+          jsonData.middle_name ? " " + jsonData.middle_name : ""
+        }`
+      },
+      avatar:
+        _.isArray(profile.photos) && profile.photos.length > 0
+          ? profile.photos[0].value
+          : null
+    };
+
+    return done(null, account);
+  }
+);
+
 passport.use(LS);
 
 passport.use("googleOAuth", googleOAuth);
+
+passport.use("facebookOAuth", facebookOAuth);

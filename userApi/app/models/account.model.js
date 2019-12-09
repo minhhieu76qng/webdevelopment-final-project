@@ -7,7 +7,9 @@ const AccountSchema = new Schema(
     local: {
       email: {
         type: String,
-        unique: true
+        index: true,
+        unique: true,
+        sparse: true
       },
       password: String
     },

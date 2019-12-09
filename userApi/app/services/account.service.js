@@ -177,7 +177,9 @@ module.exports = {
     return await accountRepo.findByEmail(email);
   },
 
-  findWithFacebookId: function(facebookId) {},
+  findWithFacebookId: async function(facebookId) {
+    return await accountRepo.findWithFacebookId(facebookId);
+  },
 
   findWithGoogleId: async function(googleId) {
     return await accountRepo.findWithGoogleId(googleId);

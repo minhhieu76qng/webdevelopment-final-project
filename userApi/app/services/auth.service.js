@@ -101,18 +101,13 @@ module.exports = {
     )(req, res, next);
   },
 
-  isAvailableGoogleAccount: (req, res, next) => {
+  loginWithFacebook: (req, res, next) => {
     passport.authenticate(
-      "googleOAuth",
+      "facebookOAuth",
       { session: false },
       async (err, accountData, info) => {
         if (err) {
-          return next(
-            new ErrorHandler(
-              httpCode.INTERNAL_SERVER_ERROR,
-              "Internal Server Error"
-            )
-          );
+          return next(err);
         }
 
         if (!accountData) {
@@ -129,11 +124,20 @@ module.exports = {
           temp.role = req.body.job;
 
           // find account in db
-          let existAccount = await accountService.findWithGoogleId(
-            temp.google.id
+          let existAccount = await accountService.findWithFacebookId(
+            temp.facebook.id
           );
 
           if (!existAccount) {
+            if (
+              !temp.role ||
+              !(temp.role === ROLES.student || temp.role === ROLES.teacher)
+            ) {
+              return res.status(httpCode.ACCEPTED).json({
+                isExist: false
+              });
+            }
+
             existAccount = await accountService.createNewSocialAccount(temp);
           }
 
