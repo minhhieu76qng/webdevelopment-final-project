@@ -1,5 +1,6 @@
 import Dashboard from './views/Dashboard';
 import Users from './views/Users';
+import Admin from './views/Admin';
 
 const dashboardRoutes = [
   {
@@ -14,6 +15,13 @@ const dashboardRoutes = [
     name: 'Users',
     icon: 'user',
     component: Users,
+    layout: '/admin',
+  },
+  {
+    path: '/create-admin',
+    name: 'Create new Admin',
+    icon: 'usergroup-add',
+    component: Admin,
     layout: '/admin',
   },
   // {
