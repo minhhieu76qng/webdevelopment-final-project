@@ -5,6 +5,7 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
+import './middlewares/axios.mdw';
 import './App.css';
 import 'antd/dist/antd.css';
 import WrappedLogin from './views/Login';
