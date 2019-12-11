@@ -84,7 +84,7 @@ const SignUpComp = () => {
       setJobErr('You must select the job you want.');
       return;
     }
-    Axios.post('/api/auth/sign-up', {
+    Axios.post('/api/user/auth/sign-up', {
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
@@ -118,7 +118,8 @@ const SignUpComp = () => {
     <Formik
       validationSchema={schema}
       onSubmit={(values, { setSubmitting }) =>
-        formSubmit(values, setSubmitting)}
+        formSubmit(values, setSubmitting)
+      }
       initialValues={{
         firstName: '',
         lastName: '',

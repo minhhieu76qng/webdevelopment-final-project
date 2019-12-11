@@ -54,7 +54,7 @@ const LoginComp = () => {
   }, [history]);
 
   const formSubmit = (values, setSubmitting) => {
-    Axios.post('/api/auth/login', {
+    Axios.post('/api/user/auth/login', {
       email: values.email,
       password: values.password,
     })
@@ -83,7 +83,7 @@ const LoginComp = () => {
     if (job !== null && (job === JOB.student || job === JOB.teacher)) {
       reqBodyObj.job = job;
     }
-    Axios.post(`/api/auth/oauth/${socialType}`, reqBodyObj)
+    Axios.post(`/api/user/auth/oauth/${socialType}`, reqBodyObj)
       .then(({ data }) => {
         if (data.isExist === false) {
           setShowJobModal(true);
@@ -141,7 +141,8 @@ const LoginComp = () => {
     <Formik
       validationSchema={schema}
       onSubmit={(values, { setSubmitting }) =>
-        formSubmit(values, setSubmitting)}
+        formSubmit(values, setSubmitting)
+      }
       initialValues={{
         email: '',
         password: '',
@@ -256,9 +257,7 @@ const LoginComp = () => {
                         disabled={props.disabled}
                         variant='danger'
                       >
-                        <FontAwesomeIcon icon={faGoogle} />
-                        {' '}
-Login with Google
+                        <FontAwesomeIcon icon={faGoogle} /> Login with Google
                       </Button>
                     )}
                   />

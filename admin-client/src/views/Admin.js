@@ -45,7 +45,7 @@ const Admin = ({ form }) => {
     validateFields((err, values) => {
       if (!err) {
         setLoading(true);
-        Axios.post('/api/admin/account', values)
+        Axios.post('/api/admin/accounts', values)
           .then(() => {
             notification.success({
               message: 'Create new admin successfully',
