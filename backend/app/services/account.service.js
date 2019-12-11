@@ -221,5 +221,36 @@ module.exports = {
 
   findWithGoogleId: async function(googleId) {
     return await accountRepo.findWithGoogleId(googleId);
+  },
+
+  getAccounts: async function(offset, limit) {
+    const [list, total] = await Promise.all([
+      accountRepo.find(offset, limit),
+      this.count()
+    ]);
+
+    return {
+      list,
+      total
+    };
+  },
+
+  count: async function() {
+    return await accountRepo.count();
+  },
+
+  getInfo: async function(id) {
+    let list = await accountRepo.getInfo(id);
+    let account = null;
+    if (_.isArray(list) && list.length > 0) {
+      account = list[0];
+    }
+
+    if (account && account.local) {
+      delete account.local.password;
+    }
+
+    console.log(account);
+    return account;
   }
 };

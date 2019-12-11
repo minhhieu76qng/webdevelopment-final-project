@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const ObjectId = require("mongoose").Types.ObjectId;
 const { Account } = require("../models/account.model");
 const { SALT_ROUND, ROLES } = require("../constance/constance");
 
@@ -62,5 +63,43 @@ module.exports = {
 
   findWithFacebookId: async function(facebookId) {
     return await Account.findOne({ "facebook.id": facebookId });
+  },
+
+  find: async function(offset, limit) {
+    return await Account.find({})
+      .skip(offset * limit)
+      .limit(limit);
+  },
+
+  findById: async function(id) {
+    return await Account.findById(id);
+  },
+
+  count: async function() {
+    return await Account.countDocuments();
+  },
+
+  getInfo: async function(id) {
+    return await Account.aggregate([
+      {
+        $match: {
+          _id: ObjectId(id)
+        }
+      },
+      {
+        $lookup: {
+          from: "teachers",
+          localField: "_id",
+          foreignField: "accountId",
+          as: "teacher"
+        }
+      },
+      {
+        $unwind: {
+          path: "$teacher",
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ]);
   }
 };

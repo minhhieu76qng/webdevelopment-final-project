@@ -5,7 +5,6 @@ const GoogleOAuthStrategy = require("passport-google-token").Strategy;
 const FacebookOAuthStrategy = require("passport-facebook-token");
 const accountService = require("../services/account.service");
 const accountHelper = require("../helpers/account.helper");
-const { ROLES } = require("../constance/constance");
 
 passport.initialize();
 

@@ -46,8 +46,24 @@ router.get(
   }
 );
 
-router.get("/:id", authorize(ROLES.admin, ROLES.root), (req, res, next) => {
-  const { id } = req.params;
-});
+router.get(
+  "/:id",
+  authorize([ROLES.admin, ROLES.root]),
+  async (req, res, next) => {
+    const { id } = req.params;
+
+    console.log(id);
+
+    try {
+      const account = await accountService.getInfo(id);
+
+      return res.status(httpCode.OK).json({
+        account
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 
 module.exports = router;
