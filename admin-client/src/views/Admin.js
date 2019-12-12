@@ -11,7 +11,9 @@ import {
   notification,
 } from 'antd';
 import Axios from 'axios';
+import { Redirect } from 'react-router-dom';
 import constance from '../constance/const';
+import TokenStorage from '../utils/TokenStorage';
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -40,6 +42,12 @@ const col2FormItem = {
 const Admin = ({ form }) => {
   const { getFieldDecorator, validateFields, resetFields } = form;
   const [loading, setLoading] = useState(false);
+
+  const currentLoggedUser = TokenStorage.decode();
+  if (currentLoggedUser.role !== constance.ROLES.root) {
+    return <Redirect to='/unauthorized' />;
+  }
+
   const formSubmit = e => {
     e.preventDefault();
     validateFields((err, values) => {

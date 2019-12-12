@@ -11,6 +11,7 @@ import 'antd/dist/antd.css';
 import WrappedLogin from './views/Login';
 import AdminLayout from './layouts/AdminLayout';
 import PrivateRoute from './layouts/PrivateRoute';
+import NotAllow from './views/NotAllow';
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
           <PrivateRoute
             path='/admin'
             render={props => <AdminLayout {...props} />}
+          />
+          <PrivateRoute
+            path='/unauthorized'
+            render={props => <NotAllow {...props} />}
           />
           <Redirect to='/admin/dashboard' />
         </Switch>

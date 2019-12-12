@@ -1,6 +1,7 @@
 import Dashboard from './views/Dashboard';
 import Users from './views/Users';
 import Admin from './views/Admin';
+import Tags from './views/Tags';
 
 const dashboardRoutes = [
   {
@@ -24,13 +25,13 @@ const dashboardRoutes = [
     component: Admin,
     layout: '/admin',
   },
-  // {
-  //   path: '/tags',
-  //   name: 'Tags',
-  //   icon: 'tags',
-  //   // component: UserProfile,
-  //   layout: '/admin',
-  // },
+  {
+    path: '/tags',
+    name: 'Tags',
+    icon: 'tags',
+    component: Tags,
+    layout: '/admin',
+  },
   // {
   //   path: '/contracts',
   //   name: 'Contracts',
