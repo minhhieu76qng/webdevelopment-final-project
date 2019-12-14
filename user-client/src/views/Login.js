@@ -17,11 +17,11 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import { faUser, faKey } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import '../../assets/scss/AuthForm.scss';
+import '../assets/scss/AuthForm.scss';
 import Axios from 'axios';
-import TokenStorage from '../../utils/TokenStorage';
-import { toast } from '../widgets/toast';
-import JOB from '../../constance/Role';
+import TokenStorage from '../utils/TokenStorage';
+import { toast } from '../components/widgets/toast';
+import JOB from '../constance/Role';
 
 const MESSAGE = {
   required: 'Field is required',
@@ -41,7 +41,7 @@ const schema = yup.object({
   password: yup.string().required(MESSAGE.required),
 });
 
-const LoginComp = () => {
+const Login = () => {
   const history = useHistory();
 
   const [socialLogin, setSocialLogin] = useState({ type: null, token: null });
@@ -300,4 +300,4 @@ const LoginComp = () => {
   );
 };
 
-export default LoginComp;
+export default Login;

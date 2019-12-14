@@ -1,13 +1,8 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import Layout from '../components/layouts/Layout';
 
-const DefaultRoute = ({ children, ...params }) => {
-  return (
-    <Route {...params}>
-      <Layout>{children}</Layout>
-    </Route>
-  );
+const DefaultRoute = ({ path, render }) => {
+  return <Route path={path} render={render} />;
 };
 
 export default DefaultRoute;

@@ -2,8 +2,6 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const { Tag } = require("../models/tag.model");
 
 async function findWithOption(option = {}, offset, limit) {
-  console.log(offset);
-  console.log(limit);
   return Tag.find(option || {})
     .skip(offset * limit)
     .limit(limit);

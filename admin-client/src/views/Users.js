@@ -239,39 +239,33 @@ const Users = () => {
                 <>
                   <Row gutter={20} className='table'>
                     <Col className='title' span={6}>
-                      Teaching:
-                    </Col>
-                    <Col className='content' span={18} />
-                  </Row>
-                  <Row gutter={20} className='table'>
-                    <Col className='title' span={8}>
                       Completed rate:
                     </Col>
-                    <Col className='content' span={16}>
-                      {accountDetail.teacher.completedRate}
+                    <Col className='content' span={18}>
+                      {`${accountDetail.teacher.completedRate}%`}
                     </Col>
                   </Row>
                   <Row gutter={20} className='table'>
-                    <Col className='title' span={8}>
+                    <Col className='title' span={6}>
                       Total job:
                     </Col>
-                    <Col className='content' span={16}>
+                    <Col className='content' span={18}>
                       {accountDetail.teacher.totalJob}
                     </Col>
                   </Row>
                   <Row gutter={20} className='table'>
-                    <Col className='title' span={8}>
+                    <Col className='title' span={6}>
                       Total Earned:
                     </Col>
-                    <Col className='content' span={16}>
+                    <Col className='content' span={18}>
                       {accountDetail.teacher.totalEarned}
                     </Col>
                   </Row>
                   <Row gutter={20} className='table'>
-                    <Col className='title' span={8}>
+                    <Col className='title' span={6}>
                       Hours worked:
                     </Col>
-                    <Col className='content' span={16}>
+                    <Col className='content' span={18}>
                       {accountDetail.teacher.hoursWorked}
                     </Col>
                   </Row>

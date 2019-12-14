@@ -26,7 +26,6 @@ module.exports = {
   },
 
   getTagTable: async function(offset, limit) {
-    console.log(offset, limit);
     const [list, total] = await Promise.all([
       tagRepo.find({}, offset, limit),
       tagRepo.count()

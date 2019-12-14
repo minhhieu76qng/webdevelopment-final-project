@@ -15,9 +15,9 @@ import * as yup from 'yup';
 import { Formik } from 'formik';
 import { faUser, faKey } from '@fortawesome/free-solid-svg-icons';
 
-import '../../assets/scss/AuthForm.scss';
-import { toast } from '../widgets/toast';
-import TokenStorage from '../../utils/TokenStorage';
+import '../assets/scss/AuthForm.scss';
+import { toast } from '../components/widgets/toast';
+import TokenStorage from '../utils/TokenStorage';
 
 const MESSAGE = {
   required: 'Field is required',
@@ -67,7 +67,7 @@ const JOB = {
   student: 'STUDENT',
 };
 
-const SignUpComp = () => {
+const SignUp = () => {
   const [job, setJob] = useState(null);
   const [jobErr, setJobErr] = useState(false);
 
@@ -313,4 +313,4 @@ const SignUpComp = () => {
   );
 };
 
-export default SignUpComp;
+export default SignUp;

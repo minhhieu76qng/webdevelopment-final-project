@@ -1,42 +1,31 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import './assets/scss/App.scss';
-import LoginComp from './components/auth/Login.comp';
 import DefaultRoute from './routes/DefaultRoute';
-import SignUpComp from './components/auth/SignUp.comp';
 import './middlewares/axios.mdw';
+import PageLayout from './layouts/PageLayout';
+import Login from './views/Login';
+import AccountLayout from './layouts/AccountLayout';
 import ProtectedRoute from './routes/ProtectedRoute';
-import StudentRoute from './routes/StudentRoute';
-import TeacherRoute from './routes/TeacherRoute';
 
 function App() {
   return (
     <div className='App user-page'>
       <Switch>
-        <DefaultRoute path='/login'>
-          <LoginComp />
-        </DefaultRoute>
+        <ProtectedRoute
+          path='/account'
+          render={props => <AccountLayout {...props} />}
+        />
+        <ProtectedRoute
+          path='/t'
+          render={props => <AccountLayout {...props} />}
+        />
+        <Route path='/' render={props => <PageLayout {...props} />} />
 
-        <DefaultRoute path='/sign-up'>
-          <SignUpComp />
-        </DefaultRoute>
-
-        <ProtectedRoute path='/account'>user</ProtectedRoute>
-
-        <StudentRoute path='/cat/:catName'>
-          view category with catName
-        </StudentRoute>
-
-        <TeacherRoute path='/t'>teacher</TeacherRoute>
-
-        <StudentRoute exact path='/'>
-          student home
-        </StudentRoute>
-
-        <DefaultRoute path='*'>no route</DefaultRoute>
+        <Route path='*' render={props => <div>no route</div>} />
       </Switch>
 
       <ToastContainer

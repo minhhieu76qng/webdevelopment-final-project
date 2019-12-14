@@ -1,14 +1,13 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import DefaultRoute from './DefaultRoute';
+import { Redirect, Route } from 'react-router-dom';
 import TokenStorage from '../utils/TokenStorage';
 
-const ProtectedRoute = ({ children, ...params }) => {
+const ProtectedRoute = ({ path, render, ...props }) => {
   if (!TokenStorage.isValid()) {
     return <Redirect to='/login' />;
   }
 
-  return <DefaultRoute {...params}>{children}</DefaultRoute>;
+  return <Route path={path} render={render} {...props} />;
 };
 
 export default ProtectedRoute;
