@@ -1,9 +1,9 @@
 import React from 'react';
-import HeaderComp from '../components/header/Header';
 import routes from '../routes';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
+import HeaderContainer from '../containers/HeaderContainer';
 
 const PageLayout = () => {
   const account = TokenStorage.decode();
@@ -28,7 +28,7 @@ const PageLayout = () => {
   };
   return (
     <>
-      <HeaderComp />
+      <HeaderContainer />
       <Switch>{getRoutes()}</Switch>
     </>
   );

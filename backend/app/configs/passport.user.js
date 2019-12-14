@@ -3,12 +3,15 @@ const _ = require("lodash");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleOAuthStrategy = require("passport-google-token").Strategy;
 const FacebookOAuthStrategy = require("passport-facebook-token");
+const JWTStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
 const accountService = require("../services/account.service");
 const accountHelper = require("../helpers/account.helper");
 
 passport.initialize();
 
 const {
+  JWTSECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   FACEBOOK_CLIENT_ID,
@@ -96,7 +99,27 @@ const facebookOAuth = new FacebookOAuthStrategy(
   }
 );
 
+const JWT = new JWTStrategy(
+  {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: JWTSECRET
+  },
+  async function(payload, done) {
+    const { _id } = payload;
+    try {
+      const account = await accountService.findById(_id);
+
+      if (!account) return done(null, false);
+
+      return done(null, account);
+    } catch (err) {
+      return done(err, false);
+    }
+  }
+);
+
 passport.use("userLocal", LS);
+passport.use("userJWT", JWT);
 
 passport.use("googleOAuth", googleOAuth);
 

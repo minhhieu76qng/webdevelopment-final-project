@@ -9,7 +9,7 @@ import {
 import Home from './views/Home';
 import TeacherList from './views/TeacherList';
 import TeacherDetail from './views/TeacherDetail';
-import Login from './views/Login';
+import LoginContainer from './containers/LoginContainer';
 import SignUp from './views/SignUp';
 import Profile from './views/account/profile';
 
@@ -18,7 +18,7 @@ const routes = {
     {
       path: '/login',
       name: 'Login',
-      component: Login,
+      component: LoginContainer,
       layout: '',
     },
     {

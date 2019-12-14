@@ -7,10 +7,8 @@ import TokenStorage from '../../utils/TokenStorage';
 import avatarImg from '../../assets/imgs/avatar.jpg';
 import CustomToggle from '../widgets/DropdownToggle';
 
-const HeaderAccount = () => {
+const HeaderAccount = ({ account, logOut }) => {
   const history = useHistory();
-
-  const account = TokenStorage.decode();
 
   let avatar = avatarImg;
   if (account && account.avatar) {
@@ -19,6 +17,7 @@ const HeaderAccount = () => {
 
   const onLogOut = () => {
     TokenStorage.remove();
+    logOut();
     history.push('/');
   };
   return (

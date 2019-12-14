@@ -32,7 +32,10 @@ const AccountSchema = new Schema(
       }
     },
     avatar: String,
-    address: String,
+    address: {
+      city: mongoose.Types.ObjectId,
+      street: String
+    },
     role: {
       type: String,
       required: true

@@ -41,7 +41,7 @@ const schema = yup.object({
   password: yup.string().required(MESSAGE.required),
 });
 
-const Login = () => {
+const Login = ({ fetchAccount }) => {
   const history = useHistory();
 
   const [socialLogin, setSocialLogin] = useState({ type: null, token: null });
@@ -60,17 +60,12 @@ const Login = () => {
     })
       .then(({ data: { token } }) => {
         TokenStorage.set(token);
+        fetchAccount();
         history.push('/');
       })
-      .catch(
-        ({
-          response: {
-            data: { error },
-          },
-        }) => {
-          toast.error(error.msg);
-        },
-      )
+      .catch(({ response: { data: { error } } }) => {
+        toast.error(error.msg);
+      })
       .finally(() => {
         setSubmitting(false);
       });
@@ -90,6 +85,7 @@ const Login = () => {
           return;
         }
         TokenStorage.set(data.token);
+        fetchAccount();
         history.push('/');
       })
       .catch(err => {
@@ -109,7 +105,6 @@ const Login = () => {
   };
 
   const responseFacebook = response => {
-    console.log(response);
     if (response && response.status !== 'unknown') {
       const { accessToken } = response;
       setSocialLogin({ type: SocialType.facebook, token: accessToken });

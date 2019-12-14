@@ -4,6 +4,7 @@ const httpCode = require("http-status-codes");
 const accountRepo = require("../repositories/account.repo");
 const teacherRepo = require("../repositories/teacher.repo");
 const mailService = require("./mail.service");
+const cityService = require("./city.service");
 const { ErrorHandler } = require("../helpers/error.helper");
 const accountHelper = require("../helpers/account.helper");
 const { MIN_LENGTH_PASSWORD, ROLES } = require("../constance/constance");
@@ -219,10 +220,6 @@ module.exports = {
     return await accountRepo.findWithFacebookId(facebookId);
   },
 
-  findWithGoogleId: async function(googleId) {
-    return await accountRepo.findWithGoogleId(googleId);
-  },
-
   getAccounts: async function(offset, limit) {
     const [list, total] = await Promise.all([
       accountRepo.find(offset, limit),
@@ -252,5 +249,51 @@ module.exports = {
 
     console.log(account);
     return account;
+  },
+
+  findById: async function(id) {
+    return accountRepo.findById(id);
+  },
+
+  updateAccount: async function(id, account) {
+    if (!account)
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Missing payload.");
+
+    if (!account.name || !account.name.firstName || !account.name.lastName) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Missing account name.");
+    }
+
+    if (!account.address || !account.address.city || !account.address.street) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Missing address.");
+    }
+
+    // kiem tra address co valid hay khong
+    const isExist = await cityService.getById(account.address.city);
+
+    if (!isExist) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Your city is not valid.");
+    }
+
+    const updatedResult = await accountRepo.updateAccount({
+      ...account,
+      _id: id
+    });
+
+    const updatedAccount = await accountRepo.findById(id);
+
+    if (updatedAccount.local) {
+      delete updatedAccount.local.password;
+    }
+
+    const token = accountHelper.createToken(updatedAccount);
+
+    return {
+      updatedResult,
+      token
+    };
+  },
+
+  findWithGoogleId: async googleId => {
+    return await accountRepo.findWithGoogleId(googleId);
   }
 };

@@ -101,5 +101,9 @@ module.exports = {
         }
       }
     ]);
+  },
+
+  updateAccount: async function(account) {
+    return await Account.updateOne({ _id: account._id }, account);
   }
 };

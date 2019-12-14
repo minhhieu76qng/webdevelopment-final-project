@@ -10,7 +10,7 @@ const Sidebar = ({ routes }) => {
         {_.isArray(routes) &&
           routes.map(route => {
             return (
-              <ListGroup.Item as='li'>
+              <ListGroup.Item as='li' key={route.path}>
                 <NavLink
                   className='d-block'
                   activeClassName='active-link'

@@ -1,14 +1,53 @@
 const router = require("express").Router();
 const httpCode = require("http-status-codes");
-// const userService = require("../../services/user/account.service");
+const accountService = require("../../services/account.service");
+const { ErrorHandler } = require("../../helpers/error.helper");
+const { authorize, authenticateUser } = require("../../middlewares/auth.mdw");
+const { ROLES } = require("../../constance/constance");
 
-// // create new user
-// router.post('/', async (req, res, next) => {
-//   const { firstName, lastName, email, password, confirmPassword, job } = req.body;
+router.get(
+  "/me",
+  authenticateUser(),
+  authorize([ROLES.student, ROLES.teacher]),
+  (req, res, next) => {
+    let temp = req.user;
+    delete temp.local.password;
+    return res.status(httpCode.OK).json({
+      account: temp
+    });
+  }
+);
 
-//   const result = await userService.createNewUser({ firstName, lastName, email, password, confirmPassword, job });
+router.put(
+  "/:id",
+  authenticateUser(),
+  authorize([ROLES.student, ROLES.teacher]),
+  async (req, res, next) => {
+    const { id } = req.params;
+    if (id != req.user._id) {
+      return next(
+        new ErrorHandler(
+          httpCode.NOT_ACCEPTABLE,
+          "Your credentials and api are not valid!"
+        )
+      );
+    }
 
-//   return res.status(httpCode.CREATED).json(result);
-// })
+    try {
+      const { token, updatedResult } = await accountService.updateAccount(
+        req.user._id,
+        req.body
+      );
+
+      return res.status(httpCode.OK).json({
+        isUpdated:
+          updatedResult.n === 1 && updatedResult.nModified === 1 ? true : false,
+        token
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 
 module.exports = router;

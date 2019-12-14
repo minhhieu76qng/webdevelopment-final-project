@@ -55,7 +55,7 @@ const JWT = new JWTStrategy(
 
       return done(null, account);
     } catch (err) {
-      return done(err), false;
+      return done(err, false);
     }
   }
 );

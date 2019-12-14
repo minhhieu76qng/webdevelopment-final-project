@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import './assets/scss/App.scss';
-import DefaultRoute from './routes/DefaultRoute';
 import './middlewares/axios.mdw';
 import PageLayout from './layouts/PageLayout';
-import Login from './views/Login';
 import AccountLayout from './layouts/AccountLayout';
 import ProtectedRoute from './routes/ProtectedRoute';
 
-function App() {
+function App({ fetchAccount }) {
+  useEffect(() => {
+    fetchAccount();
+  }, [fetchAccount]);
   return (
     <div className='App user-page'>
       <Switch>

@@ -3,9 +3,9 @@ import routes from '../routes';
 import { Route, Redirect } from 'react-router-dom';
 import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
-import { Row, Col, Jumbotron } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import Sidebar from '../components/sidebar/Sidebar';
-import HeaderAccount from '../components/header/HeaderAccount';
+import HeaderAccountContainer from '../containers/HeaderAccountContainer';
 
 const AccountLayout = () => {
   const getStudentRoutes = () => {
@@ -27,7 +27,6 @@ const AccountLayout = () => {
   const getTeacherRoutes = () => {
     return routes.teacher.map(route => {
       if (route.layout === '/t') {
-        console.log(route);
         return (
           <Route
             path={route.layout + route.path}
@@ -36,6 +35,7 @@ const AccountLayout = () => {
           />
         );
       }
+      return null;
     });
   };
 
@@ -46,7 +46,6 @@ const AccountLayout = () => {
   }
 
   if (account.role !== ROLE.student && account.role !== ROLE.teacher) {
-    console.log('a');
     return <Redirect to='/' />;
   }
 
@@ -60,11 +59,17 @@ const AccountLayout = () => {
   return (
     <>
       <div id='header'>
-        <HeaderAccount />
+        <HeaderAccountContainer />
       </div>
-      <div style={{ overflowX: 'hidden', padding: 0 }}>
+      <div style={{ padding: 0 }}>
         <Row className='account-layout' noGutters>
-          <Col xs={12} md={3} xl={2} className='sidebar'>
+          <Col
+            xs={12}
+            md={3}
+            xl={2}
+            className='sidebar'
+            style={{ marginTop: 15 }}
+          >
             <Sidebar routes={links} />
           </Col>
           <Col xs={12} md={9} xl={10} className='page-content'>

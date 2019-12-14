@@ -37,5 +37,15 @@ module.exports = {
     if (account.role === ROLES.admin || account.role === ROLES.root) {
       return this.generateAdminToken(account, option);
     }
+  },
+
+  createToken: function(account) {
+    let temp = Object.assign({}, account);
+
+    delete temp._doc.local.password;
+
+    const token = this.generateToken(temp._doc, { expiresIn: "1d" });
+
+    return token;
   }
 };

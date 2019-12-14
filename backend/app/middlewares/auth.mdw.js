@@ -30,6 +30,35 @@ module.exports = {
       })(req, res, next);
     };
   },
+
+  authenticateUser: () => {
+    return (req, res, next) => {
+      passport.authenticate("userJWT", { session: false }, function(
+        err,
+        account,
+        info
+      ) {
+        if (err) {
+          throw new ErrorHandler(
+            httpCode.INTERNAL_SERVER_ERROR,
+            "Internal Server Error"
+          );
+        }
+
+        if (!account) {
+          throw new ErrorHandler(
+            httpCode.BAD_REQUEST,
+            "Your token is not valid"
+          );
+        }
+
+        req.user = account;
+
+        next();
+      })(req, res, next);
+    };
+  },
+
   authorize: (roles = []) => {
     if (typeof roles === "string") {
       roles = [roles];

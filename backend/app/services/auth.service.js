@@ -6,20 +6,7 @@ const { ErrorHandler } = require("../helpers/error.helper");
 const accountHelper = require("../helpers/account.helper");
 const { ROLES } = require("../constance/constance");
 
-function createToken(account) {
-  let temp = Object.assign({}, account);
-
-  delete temp._doc.local.password;
-
-  const token = accountHelper.generateToken(temp._doc, { expiresIn: "1d" });
-
-  return {
-    token
-  };
-}
-
 module.exports = {
-  createToken,
   user_loginWithLocal: (req, res, next) => {
     passport.authenticate(
       "userLocal",
@@ -49,7 +36,7 @@ module.exports = {
           );
         }
 
-        const { token } = createToken(account);
+        const token = accountHelper.createToken(account);
 
         return res.status(httpCode.OK).json({ token });
       }
@@ -101,7 +88,7 @@ module.exports = {
             existAccount = await accountService.createNewSocialAccount(temp);
           }
 
-          const { token } = createToken(existAccount);
+          const token = accountHelper.createToken(existAccount);
 
           return res.status(httpCode.OK).json({
             token
@@ -153,7 +140,7 @@ module.exports = {
             existAccount = await accountService.createNewSocialAccount(temp);
           }
 
-          const { token } = createToken(existAccount);
+          const token = accountHelper.createToken(existAccount);
 
           return res.status(httpCode.OK).json({
             token
@@ -192,7 +179,7 @@ module.exports = {
           );
         }
 
-        const { token } = createToken(account);
+        const token = accountHelper.createToken(account);
 
         return res.status(httpCode.OK).json({ token });
       }
