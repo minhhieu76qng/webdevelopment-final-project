@@ -11,9 +11,6 @@ const Profile = () => {
             <UpdateInfoContainer />
           </div>
         </Tab>
-        <Tab eventKey='avatar' title='Avatar'>
-          avatar
-        </Tab>
         <Tab eventKey='skills' title='Skill tags'>
           skills
         </Tab>

@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import UpdateInfo from '../views/account/profile/UpdateInfo';
-import { fetchAccount } from '../actions';
 
 const mapStateToProps = state => {
   return {
@@ -8,12 +7,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    fetchAccount: () => {
-      dispatch(fetchAccount());
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateInfo);
+export default connect(mapStateToProps)(UpdateInfo);

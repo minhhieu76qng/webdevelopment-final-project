@@ -50,4 +50,23 @@ router.put(
   }
 );
 
+router.put(
+  "/:id/avatar",
+  authenticateUser(),
+  authorize([ROLES.student, ROLES.teacher]),
+  async (req, res, next) => {
+    const { id } = req.params;
+    if (id != req.user._id) {
+      return next(
+        new ErrorHandler(
+          httpCode.NOT_ACCEPTABLE,
+          "Your credentials and api are not valid!"
+        )
+      );
+    }
+
+    await accountService.uploadAvatar(req, res);
+  }
+);
+
 module.exports = router;

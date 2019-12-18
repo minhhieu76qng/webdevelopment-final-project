@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const _ = require("lodash");
 const httpCode = require("http-status-codes");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const Aws = require("aws-sdk");
 const accountRepo = require("../repositories/account.repo");
 const teacherRepo = require("../repositories/teacher.repo");
 const mailService = require("./mail.service");
@@ -14,6 +17,14 @@ function validateString(field, message) {
     throw new ErrorHandler(httpCode.BAD_REQUEST, message);
   }
 }
+
+const { USER_KEY, USER_SECRET, BUCKET_NAME } = process.env;
+const s3Bucket = new Aws.S3({
+  accessKeyId: USER_KEY,
+  secretAccessKey: USER_SECRET,
+  Bucket: BUCKET_NAME,
+  region: "ap-southeast-1"
+});
 
 module.exports = {
   createNewLocalUser: async function(data) {
@@ -295,5 +306,66 @@ module.exports = {
 
   findWithGoogleId: async googleId => {
     return await accountRepo.findWithGoogleId(googleId);
+  },
+
+  uploadAvatar: async (req, res) => {
+    // MULTER
+    var upload = multer({
+      storage: multerS3({
+        s3: s3Bucket,
+        bucket: `${BUCKET_NAME}`,
+        acl: "public-read",
+        metadata: function(req, file, cb) {
+          cb(null, { fieldName: file.fieldname });
+        },
+        key: function(req, file, cb) {
+          const name = file.originalname;
+          const ext = name.substring(name.lastIndexOf("."), name.length);
+          cb(null, `avatars/${Date.now().toString()}${ext}`);
+        }
+      })
+    });
+
+    const multerUploader = upload.single("image");
+
+    multerUploader(req, res, async function(err) {
+      if (err) {
+        throw new ErrorHandler(
+          httpCode.INTERNAL_SERVER_ERROR,
+          "Can't upload avatar right now!"
+        );
+      }
+
+      const location = req.file.location;
+      // luu vao db
+      try {
+        const updatedResult = await accountRepo.updateAvatar(
+          req.user._id,
+          location
+        );
+
+        const updatedAccount = await accountRepo.findById(req.user._id);
+
+        if (updatedAccount.local) {
+          delete updatedAccount.local.password;
+        }
+
+        // generate token
+        const token = accountHelper.createToken(updatedAccount);
+
+        return res.status(httpCode.OK).json({
+          isUpdated:
+            updatedResult.n === 1 && updatedResult.nModified === 1
+              ? true
+              : false,
+          token
+        });
+      } catch (err) {
+        throw new ErrorHandler(
+          httpCode.INTERNAL_SERVER_ERROR,
+          "Internal Server Error"
+        );
+      }
+    });
   }
 };

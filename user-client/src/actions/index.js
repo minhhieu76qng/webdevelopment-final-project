@@ -17,6 +17,7 @@ export function fetchAccount() {
   return dispatch => {
     return Axios.get(`/api/user/accounts/me`)
       .then(({ data: { account } }) => {
+        console.log(account);
         dispatch(setUser(account));
       })
       .catch(err => {});

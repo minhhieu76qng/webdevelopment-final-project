@@ -105,5 +105,9 @@ module.exports = {
 
   updateAccount: async function(account) {
     return await Account.updateOne({ _id: account._id }, account);
+  },
+
+  updateAvatar: async function(id, avatar) {
+    return await Account.updateOne({ _id: id }, { avatar: avatar });
   }
 };
