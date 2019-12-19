@@ -1,5 +1,5 @@
 import App from '../App';
-import { fetchAccount } from '../actions';
+import { fetchAccount, fetchCategories } from '../actions';
 import { connect } from 'react-redux';
 
 const mapDispatchToProps = dispatch => {
@@ -7,10 +7,10 @@ const mapDispatchToProps = dispatch => {
     fetchAccount: () => {
       dispatch(fetchAccount());
     },
+    fetchCategories: () => {
+      dispatch(fetchCategories());
+    },
   };
 };
 
-export default connect(
-  null,
-  mapDispatchToProps,
-)(App);
+export default connect(null, mapDispatchToProps)(App);

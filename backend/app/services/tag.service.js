@@ -71,5 +71,9 @@ module.exports = {
     }
 
     return await tagRepo.updateTag({ _id, tagName, isDeleted });
+  },
+
+  getActives: async function() {
+    return await tagRepo.findActive();
   }
 };

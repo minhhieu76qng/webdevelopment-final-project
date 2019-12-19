@@ -1,7 +1,10 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const { Tag } = require("../models/tag.model");
 
-async function findWithOption(option = {}, offset, limit) {
+async function findWithOption(option = {}, offset = null, limit = null) {
+  if (!offset && !limit) {
+    return Tag.find(option || {});
+  }
   return Tag.find(option || {})
     .skip(offset * limit)
     .limit(limit);
@@ -25,11 +28,11 @@ module.exports = {
     );
   },
 
-  find: async function(option = {}, offset, limit) {
+  find: async function(option = {}, offset = null, limit = null) {
     return await findWithOption(option, offset, limit);
   },
 
-  findActive: async function(limit, offset) {
+  findActive: async function(offset = null, limit = null) {
     return await findWithOption({ isDeleted: false }, limit, offset);
   },
 

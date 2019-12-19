@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Image, Dropdown, Container } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
+import _ from 'lodash';
 import logo from '../../assets/imgs/logo.png';
 import '../../assets/scss/Header.scss';
 import TokenStorage from '../../utils/TokenStorage';
@@ -8,7 +9,7 @@ import avatarImg from '../../assets/imgs/avatar.jpg';
 import CustomToggle from '../widgets/DropdownToggle';
 import ROLE from '../../constance/Role';
 
-const HeaderComp = ({ account, logOut }) => {
+const HeaderComp = ({ account, categories, logOut }) => {
   const history = useHistory();
   let avatar = avatarImg;
   if (account && account.avatar) {
@@ -108,21 +109,25 @@ const HeaderComp = ({ account, logOut }) => {
         <div>
           <Container>
             <Navbar expand='md'>
-              <Navbar.Toggle aria-controls='basic-navbar-nav' />
+              <Navbar.Toggle
+                aria-controls='basic-navbar-nav'
+                className='btn-sm'
+                style={{ fontSize: 14 }}
+              />
               <Navbar.Collapse id='basic-navbar-nav'>
                 <Nav className='main-navbar'>
-                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                    Primary School
-                  </Nav.Link>
-                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                    Primary School
-                  </Nav.Link>
-                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                    Primary School
-                  </Nav.Link>
-                  <Nav.Link className='mr-md-4' as={Link} to='/fds'>
-                    Primary School
-                  </Nav.Link>
+                  {categories &&
+                    _.isArray(categories) &&
+                    categories.map(cat => (
+                      <Nav.Link
+                        key={cat._id}
+                        className='mr-md-4'
+                        as={Link}
+                        to={`/categories/${cat._id}`}
+                      >
+                        {cat.name}
+                      </Nav.Link>
+                    ))}
                 </Nav>
               </Navbar.Collapse>
             </Navbar>

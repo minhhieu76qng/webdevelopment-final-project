@@ -1,0 +1,7 @@
+const categoryRepo = require("../repositories/category.repo");
+
+module.exports = {
+  getAvtives: async function() {
+    return await categoryRepo.getActives();
+  }
+};

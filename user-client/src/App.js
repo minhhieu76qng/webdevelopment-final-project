@@ -8,11 +8,15 @@ import './middlewares/axios.mdw';
 import PageLayout from './layouts/PageLayout';
 import AccountLayout from './layouts/AccountLayout';
 import ProtectedRoute from './routes/ProtectedRoute';
+import TokenStorage from './utils/TokenStorage';
 
-function App({ fetchAccount }) {
+function App({ fetchAccount, fetchCategories }) {
   useEffect(() => {
-    fetchAccount();
-  }, [fetchAccount]);
+    if (TokenStorage.isValid()) {
+      fetchAccount();
+    }
+    fetchCategories();
+  }, [fetchAccount, fetchCategories]);
   return (
     <div className='App user-page'>
       <Switch>

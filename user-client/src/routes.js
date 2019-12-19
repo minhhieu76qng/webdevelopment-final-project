@@ -11,7 +11,7 @@ import TeacherList from './views/TeacherList';
 import TeacherDetail from './views/TeacherDetail';
 import LoginContainer from './containers/LoginContainer';
 import SignUp from './views/SignUp';
-import Profile from './views/account/profile';
+import ProfileContainer from './containers/ProfileContainer';
 
 const routes = {
   student: [
@@ -28,7 +28,7 @@ const routes = {
       layout: '',
     },
     {
-      path: '/categories',
+      path: '/categories/:catId',
       name: 'Categories',
       component: TeacherList,
       layout: '',
@@ -48,7 +48,7 @@ const routes = {
     {
       path: '/profile',
       name: 'Profile',
-      component: Profile,
+      component: ProfileContainer,
       layout: '/account',
     },
     {
@@ -69,7 +69,7 @@ const routes = {
     {
       path: '/profile',
       name: 'Profile',
-      component: Profile,
+      component: ProfileContainer,
       layout: '/t',
       icon: <FontAwesomeIcon icon={faIdBadge} />,
     },
@@ -86,6 +86,13 @@ const routes = {
       component: () => <div>contracts</div>,
       layout: '/t',
       icon: <FontAwesomeIcon icon={faAddressCard} />,
+    },
+    {
+      exact: true,
+      path: '/',
+      name: 'Home',
+      redirectPath: '/t/dashboard',
+      layout: '/t',
     },
   ],
 };

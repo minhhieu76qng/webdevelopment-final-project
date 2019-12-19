@@ -4,6 +4,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
 import HeaderContainer from '../containers/HeaderContainer';
+import { Container } from 'react-bootstrap';
 
 const PageLayout = () => {
   const account = TokenStorage.decode();
@@ -29,7 +30,10 @@ const PageLayout = () => {
   return (
     <>
       <HeaderContainer />
-      <Switch>{getRoutes()}</Switch>
+      <Container className='mt-4'>
+        <Switch>{getRoutes()}</Switch>
+      </Container>
+      {/* footer */}
     </>
   );
 };

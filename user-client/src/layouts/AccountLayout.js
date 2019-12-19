@@ -1,6 +1,6 @@
 import React from 'react';
 import routes from '../routes';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
 import { Row, Col } from 'react-bootstrap';
@@ -27,6 +27,9 @@ const AccountLayout = () => {
   const getTeacherRoutes = () => {
     return routes.teacher.map(route => {
       if (route.layout === '/t') {
+        if (route.redirectPath) {
+          return <Redirect key={route.path} to={route.redirectPath} />;
+        }
         return (
           <Route
             path={route.layout + route.path}
@@ -77,8 +80,10 @@ const AccountLayout = () => {
               className='shadow'
               style={{ background: '#fff', margin: 15, padding: 15 }}
             >
-              {account.role === ROLE.student && getStudentRoutes()}
-              {account.role === ROLE.teacher && getTeacherRoutes()}
+              <Switch>
+                {account.role === ROLE.student && getStudentRoutes()}
+                {account.role === ROLE.teacher && getTeacherRoutes()}
+              </Switch>
             </div>
           </Col>
         </Row>

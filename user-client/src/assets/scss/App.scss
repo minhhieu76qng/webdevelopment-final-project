@@ -119,3 +119,13 @@ body {
     color: $color-link;
   }
 }
+
+.profile {
+  table.teaching-info {
+    border-collapse: separate;
+    border-spacing: 30px 15px;
+    td {
+      vertical-align: top;
+    }
+  }
+}

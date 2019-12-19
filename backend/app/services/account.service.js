@@ -257,8 +257,6 @@ module.exports = {
     if (account && account.local) {
       delete account.local.password;
     }
-
-    console.log(account);
     return account;
   },
 

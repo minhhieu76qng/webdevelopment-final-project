@@ -5,6 +5,7 @@ import { setUser } from '../actions';
 const mapStateToProps = state => {
   return {
     account: state.loggedAccount,
+    categories: state.categories,
   };
 };
 
@@ -16,7 +17,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HeaderComp);
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderComp);

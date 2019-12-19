@@ -46,6 +46,15 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/list", async (req, res, next) => {
+  try {
+    const tags = await tagService.getActives();
+    return res.status(httpCode.OK).json({ tags });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.put(
   "/",
   authenticateAdmin(),
@@ -70,8 +79,6 @@ router.put(
       tagName: req.body.tagName,
       isDeleted: req.body.isDeleted
     };
-
-    console.log(tagObj);
     try {
       const result = await tagService.editTag(tagObj);
 

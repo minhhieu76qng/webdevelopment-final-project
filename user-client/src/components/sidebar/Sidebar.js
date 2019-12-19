@@ -9,6 +9,9 @@ const Sidebar = ({ routes }) => {
       <ListGroup as='ul'>
         {_.isArray(routes) &&
           routes.map(route => {
+            if (route.redirectPath) {
+              return null;
+            }
             return (
               <ListGroup.Item as='li' key={route.path}>
                 <NavLink

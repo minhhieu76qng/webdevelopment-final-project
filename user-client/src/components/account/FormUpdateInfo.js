@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -14,20 +14,7 @@ const schema = yup.object({
   street: yup.string().required(),
 });
 
-const FormUpdateInfo = ({ account, fetchAccount }) => {
-  const [cities, setCities] = useState(null);
-  useEffect(() => {
-    Axios.get('/api/cities')
-      .then(({ data: { cities: list } }) => {
-        setCities(list);
-      })
-      .catch(err => {
-        if (err && err.response && err.response.data.error) {
-          toast.error(err.response.data.error.msg);
-        }
-      });
-  }, []);
-
+const FormUpdateInfo = ({ account, cities, fetchAccount }) => {
   let email = null;
   if (account) {
     if (account.local && account.local.email) {
@@ -89,8 +76,8 @@ const FormUpdateInfo = ({ account, fetchAccount }) => {
         email: email,
         firstName: account.name.firstName,
         lastName: account.name.lastName,
-        street: account.address.street,
-        city: account.address.city,
+        street: account.address ? account.address.street : null,
+        city: account.address ? account.address.city : null,
       }}
       onSubmit={(values, { setSubmitting }) =>
         formUpdateSubmit(values, setSubmitting)
