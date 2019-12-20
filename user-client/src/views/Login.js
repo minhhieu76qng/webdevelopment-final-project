@@ -136,8 +136,7 @@ const Login = ({ fetchAccount }) => {
     <Formik
       validationSchema={schema}
       onSubmit={(values, { setSubmitting }) =>
-        formSubmit(values, setSubmitting)
-      }
+        formSubmit(values, setSubmitting)}
       initialValues={{
         email: '',
         password: '',
@@ -252,7 +251,9 @@ const Login = ({ fetchAccount }) => {
                         disabled={props.disabled}
                         variant='danger'
                       >
-                        <FontAwesomeIcon icon={faGoogle} /> Login with Google
+                        <FontAwesomeIcon icon={faGoogle} />
+                        {' '}
+Login with Google
                       </Button>
                     )}
                   />

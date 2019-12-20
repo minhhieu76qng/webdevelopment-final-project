@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { Form, Badge, Button } from 'react-bootstrap';
 import Axios from 'axios';
 import Select from 'react-select';
-import toast from '../widgets/toast';
+import { toast } from '../widgets/toast';
 
 const selectTagsSchema = yup.object().shape({
   select_tags: yup
@@ -18,8 +18,9 @@ const selectTagsSchema = yup.object().shape({
       }),
     ),
 });
-const FormUpdateTags = ({ teacher }) => {
+const FormUpdateTags = ({ teacher, fetchTeacher }) => {
   const [tagList, setTagList] = useState(null);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     // fetch tags
@@ -40,14 +41,36 @@ const FormUpdateTags = ({ teacher }) => {
       });
   }, []);
 
-  const handleSubmit = (values, setSubmitting) => {
-    const temp = values.select_tags.map(val => ({
-      _id: val.value,
-    }));
+  const formEditTagsSubmit = (values, setSubmitting) => {
+    const temp = values.select_tags.map(val => val.value);
+    // kiem tra co them moi hay xoa tag hay khong
+    // let isEditted = false;
+    // if (temp.length === teacher.tags.length) {
+    //   for (let i = 0; i < temp.length; i += 1) {
+    //     for (let j = 0; j < teacher.tags; j += 1) {
+    //       if (!(teacher.tags[j]._id === temp[i])) {
+    //         isEditted = true;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // } else {
+    //   isEditted = true;
+    // }
 
-    Axios.put(`/api/user/teachers/${teacher._id}/tags`, { tags: temp })
-      .then(response => {
-        console.log(response);
+    // if (!isEditted) {
+    //   toast.warn('You must add or remove tags to submit form.');
+    //   setSubmitting(false);
+    //   return;
+    // }
+
+    Axios.put(`/api/user/teachers/me/tags`, { tags: temp })
+      .then(({ data: { isUpdated } }) => {
+        if (isUpdated) {
+          toast.success('Update tags successfully');
+          fetchTeacher();
+          setShowEdit(false);
+        }
       })
       .catch(err => {
         if (err && err.response && err.response.data.error) {
@@ -67,7 +90,8 @@ const FormUpdateTags = ({ teacher }) => {
   return (
     <div style={{ maxWidth: 350 }}>
       <div className='mb-3'>
-        Your skill tags:{' '}
+        Your skill tags:
+        {' '}
         {teacher &&
           _.isArray(teacher.tags) &&
           teacher.tags.map(tag => (
@@ -76,18 +100,24 @@ const FormUpdateTags = ({ teacher }) => {
             </Badge>
           ))}
       </div>
-      {teacher && (
+      {!showEdit && (
+        <Button variant='warning' size='sm' onClick={() => setShowEdit(true)}>
+          Edit tags
+        </Button>
+      )}
+      {teacher && showEdit && (
         <Formik
           validationSchema={selectTagsSchema}
           initialValues={{
             select_tags: currentTags,
           }}
           onSubmit={(values, { setSubmitting }) =>
-            handleSubmit(values, setSubmitting)
-          }
+            formEditTagsSubmit(values, setSubmitting)}
         >
           {({
             values,
+            errors,
+            touched,
             setFieldValue,
             setFieldTouched,
             isSubmitting,
@@ -105,10 +135,28 @@ const FormUpdateTags = ({ teacher }) => {
                   onBlur={() => setFieldTouched('select_tags')}
                   isDisabled={isSubmitting}
                 />
+                {!!errors.select_tags && touched.select_tags && (
+                  <div style={{ color: 'red', marginTop: '.5rem' }}>
+                    {errors.select_tags}
+                  </div>
+                )}
               </Form.Group>
               <div className='text-center'>
-                <Button disabled={isSubmitting} size='sm' type='submit'>
+                <Button
+                  className='mr-2'
+                  disabled={isSubmitting}
+                  size='sm'
+                  type='submit'
+                >
                   Submit
+                </Button>
+                <Button
+                  disabled={isSubmitting}
+                  size='sm'
+                  variant='secondary'
+                  onClick={() => setShowEdit(false)}
+                >
+                  Cancel
                 </Button>
               </div>
             </Form>

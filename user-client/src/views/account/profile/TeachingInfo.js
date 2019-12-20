@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import Axios from 'axios';
-import toast from '../../../components/widgets/toast';
+import { toast } from '../../../components/widgets/toast';
 import FormUpdateTags from '../../../components/account/FormUpdateTags';
 
 const schema = yup.object({
@@ -16,7 +16,7 @@ const schema = yup.object({
     .min(1),
 });
 
-const TeachingInfo = ({ account }) => {
+const TeachingInfo = () => {
   // update price and skill tags
   const [editting, setEditting] = useState(false);
   const [teacherInfo, setTeacherInfo] = useState(null);
@@ -26,7 +26,11 @@ const TeachingInfo = ({ account }) => {
       .then(({ data: { teacher } }) => {
         setTeacherInfo(teacher);
       })
-      .catch(err => {});
+      .catch(err => {
+        if (err && err.response && err.response.data.error) {
+          toast.error(err.response.data.error);
+        }
+      });
   };
 
   useEffect(() => {
@@ -34,7 +38,7 @@ const TeachingInfo = ({ account }) => {
   }, []);
 
   const formChangePriceSubmit = (values, setSubmitting) => {
-    Axios.put(`/api/user/teachers/${teacherInfo._id}/price`, values)
+    Axios.put(`/api/user/teachers/me/price`, values)
       .then(({ data: { isUpdated } }) => {
         if (isUpdated) {
           toast.success('Update price successfully.');
@@ -61,7 +65,10 @@ const TeachingInfo = ({ account }) => {
               <tbody>
                 <tr>
                   <td className='title'>Completed rate:</td>
-                  <td>{teacherInfo.completedRate}%</td>
+                  <td>
+                    {teacherInfo.completedRate}
+%
+                  </td>
                 </tr>
                 <tr>
                   <td className='title'>Total job:</td>
@@ -69,14 +76,18 @@ const TeachingInfo = ({ account }) => {
                 </tr>
                 <tr>
                   <td className='title'>Total earned:</td>
-                  <td>${teacherInfo.totalEarned}</td>
+                  <td>
+$
+                    {teacherInfo.totalEarned}
+                  </td>
                 </tr>
                 <tr>
                   <td className='title'>Price/hour:</td>
                   <td>
                     {_.isNumber(teacherInfo.pricePerHour)
                       ? `$${teacherInfo.pricePerHour}`
-                      : 'NaN'}{' '}
+                      : 'NaN'}
+                    {' '}
                     <Button
                       style={{ marginLeft: 10 }}
                       size='sm'
@@ -88,7 +99,8 @@ const TeachingInfo = ({ account }) => {
                         className='d-inline-block mr-2'
                       />
                       Edit
-                    </Button>{' '}
+                    </Button>
+                    {' '}
                   </td>
                 </tr>
               </tbody>
@@ -96,7 +108,7 @@ const TeachingInfo = ({ account }) => {
           )}
         </Col>
         <Col xs={12} md={5} lg={6} xl={8}>
-          <FormUpdateTags teacher={teacherInfo} />
+          <FormUpdateTags teacher={teacherInfo} fetchTeacher={getMe} />
         </Col>
       </Row>
 
@@ -111,8 +123,7 @@ const TeachingInfo = ({ account }) => {
                   : 0,
               }}
               onSubmit={(values, { setSubmitting }) =>
-                formChangePriceSubmit(values, setSubmitting)
-              }
+                formChangePriceSubmit(values, setSubmitting)}
             >
               {({
                 handleSubmit,

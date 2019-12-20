@@ -23,13 +23,13 @@ export function fetchCategories() {
       .then(({ data: { categories } }) => {
         dispatch(setCategories(categories));
       })
-      .catch(err => {});
+      .catch(() => {});
   };
 }
 
 export function fetchAccount() {
-  const account = TokenStorage.decode();
-  if (!account) {
+  const accountInToken = TokenStorage.decode();
+  if (!accountInToken) {
     // to login
   }
   return dispatch => {
@@ -37,7 +37,7 @@ export function fetchAccount() {
       .then(({ data: { account } }) => {
         dispatch(setUser(account));
       })
-      .catch(err => {});
+      .catch(() => {});
   };
 }
 
@@ -45,9 +45,8 @@ export function fetchCities() {
   return dispatch => {
     return Axios.get('/api/cities')
       .then(({ data: { cities: list } }) => {
-        console.log(list);
         dispatch(setCities(list));
       })
-      .catch(err => {});
+      .catch(() => {});
   };
 }

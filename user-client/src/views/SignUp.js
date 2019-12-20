@@ -118,8 +118,7 @@ const SignUp = () => {
     <Formik
       validationSchema={schema}
       onSubmit={(values, { setSubmitting }) =>
-        formSubmit(values, setSubmitting)
-      }
+        formSubmit(values, setSubmitting)}
       initialValues={{
         firstName: '',
         lastName: '',

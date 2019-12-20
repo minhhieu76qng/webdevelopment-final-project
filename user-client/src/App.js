@@ -30,7 +30,7 @@ function App({ fetchAccount, fetchCategories }) {
         />
         <Route path='/' render={props => <PageLayout {...props} />} />
 
-        <Route path='*' render={props => <div>no route</div>} />
+        <Route path='*' render={() => <div>no route</div>} />
       </Switch>
 
       <ToastContainer

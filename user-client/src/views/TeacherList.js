@@ -1,17 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Container,
-  Button,
-  Col,
-  Row,
-  FormControl,
-  Form,
-} from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 
 const TeacherList = () => {
-  let { catId } = useParams();
-  console.log(catId);
+  const { catId } = useParams();
   return (
     <div className='teacher-list-page shadow bg-white rounded'>
       <div className='d-flex filter-sort-wrapper bg-light px-3 py-3'>
@@ -32,7 +24,7 @@ const TeacherList = () => {
           <option>asgf</option>
         </Form.Control>
       </div>
-      <div className='list'></div>
+      <div className='list'>{catId}</div>
     </div>
   );
 };

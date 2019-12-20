@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import _ from 'lodash';
 import Axios from 'axios';
-import toast from '../widgets/toast';
+import { toast } from '../widgets/toast';
 import TokenStorage from '../../utils/TokenStorage';
 
 const schema = yup.object({
@@ -73,15 +73,14 @@ const FormUpdateInfo = ({ account, cities, fetchAccount }) => {
     <Formik
       validationSchema={schema}
       initialValues={{
-        email: email,
+        email,
         firstName: account.name.firstName,
         lastName: account.name.lastName,
         street: account.address ? account.address.street : null,
         city: account.address ? account.address.city : null,
       }}
       onSubmit={(values, { setSubmitting }) =>
-        formUpdateSubmit(values, setSubmitting)
-      }
+        formUpdateSubmit(values, setSubmitting)}
     >
       {({
         values,

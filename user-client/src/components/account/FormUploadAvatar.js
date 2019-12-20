@@ -1,6 +1,6 @@
 import React from 'react';
 import Axios from 'axios';
-import toast from '../widgets/toast';
+import { toast } from '../widgets/toast';
 import TokenStorage from '../../utils/TokenStorage';
 
 const FormUploadAvatar = ({ account, fetchAccount }) => {
@@ -32,18 +32,18 @@ const FormUploadAvatar = ({ account, fetchAccount }) => {
   };
   return (
     <div className='custom-file'>
-      <input
-        style={{ display: 'none' }}
-        type='file'
-        name='avatar'
-        id='inputGroupFile01'
-        onChange={handleChange}
-      />
       <label
         className='d-inline-block mt-2 btn btn-primary btn-sm'
-        htmlFor='inputGroupFile01'
+        htmlFor='upload-avatar'
       >
         Upload avatar
+        <input
+          style={{ display: 'none' }}
+          type='file'
+          name='avatar'
+          id='upload-avatar'
+          onChange={handleChange}
+        />
       </label>
     </div>
   );

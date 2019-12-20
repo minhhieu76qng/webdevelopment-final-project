@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Image } from 'react-bootstrap';
-import FormUpdateInfoContainer from '../../../containers/FormUpdateInfoContainer';
-import FormUploadAvatarContainer from '../../../containers/FormUploadAvatarContainer';
+import FormUpdateInfo from '../../../containers/FormUpdateInfoContainer';
+import FormUploadAvatar from '../../../containers/FormUploadAvatarContainer';
 
 const UpdateInfo = ({ account }) => {
   return (
@@ -15,12 +15,12 @@ const UpdateInfo = ({ account }) => {
               thumbnail
             />
           </div>
-          <FormUploadAvatarContainer />
+          <FormUploadAvatar />
         </Col>
       )}
       {account && (
         <Col xs={12} sm={8} style={{ maxWidth: 450 }}>
-          <FormUpdateInfoContainer />
+          <FormUpdateInfo />
         </Col>
       )}
     </Row>

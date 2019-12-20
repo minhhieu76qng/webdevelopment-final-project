@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import UpdateInfoContainer from '../../../containers/UpdateInfoContainer';
 import ROLE from '../../../constance/Role';
-import TeachingInfoContainer from '../../../containers/TeachingInfoContainer';
+import TeachingInfo from './TeachingInfo';
 
 const Profile = ({ account, fetchCities }) => {
   useEffect(() => {
@@ -19,13 +19,8 @@ const Profile = ({ account, fetchCities }) => {
         {account && account.role === ROLE.teacher && (
           <Tab eventKey='teaching' title='Teaching'>
             <div className='mt-4'>
-              <TeachingInfoContainer />
+              <TeachingInfo />
             </div>
-          </Tab>
-        )}
-        {account && account.role === ROLE.teacher && (
-          <Tab eventKey='skills' title='Skill tags'>
-            skills
           </Tab>
         )}
         {account && account.role === ROLE.teacher && (

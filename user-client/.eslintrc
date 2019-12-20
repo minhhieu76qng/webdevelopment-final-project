@@ -17,6 +17,10 @@
     "react/jsx-filename-extension": ["off"],
     "react/prop-types": ["off"],
     "no-return-assign": ["off"],
-    "react/jsx-props-no-spreading": ["off"]
+    "react/jsx-props-no-spreading": ["off"],
+    "no-underscore-dangle": [
+      "error",
+      { "allow": ["_id", "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"] }
+    ]
   }
 }

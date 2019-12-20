@@ -1,10 +1,10 @@
 import React from 'react';
-import routes from '../routes';
 import { Route, Redirect, Switch } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import routes from '../routes';
 import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
 import HeaderContainer from '../containers/HeaderContainer';
-import { Container } from 'react-bootstrap';
 
 const PageLayout = () => {
   const account = TokenStorage.decode();

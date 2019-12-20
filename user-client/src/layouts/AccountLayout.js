@@ -1,9 +1,9 @@
 import React from 'react';
-import routes from '../routes';
 import { Route, Redirect, Switch } from 'react-router-dom';
+import { Row, Col } from 'react-bootstrap';
+import routes from '../routes';
 import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
-import { Row, Col } from 'react-bootstrap';
 import Sidebar from '../components/sidebar/Sidebar';
 import HeaderAccountContainer from '../containers/HeaderAccountContainer';
 
