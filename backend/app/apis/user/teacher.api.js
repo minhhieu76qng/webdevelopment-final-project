@@ -21,15 +21,17 @@ router.get(
 );
 
 router.put(
-  "/:id/price",
+  "/me/price",
   authenticateUser(),
   authorize([ROLES.teacher]),
   async (req, res, next) => {
-    const { id } = req.params;
     const { price } = req.body;
 
     try {
-      const { isUpdated } = await teacherService.updatePrice(id, price);
+      const { isUpdated } = await teacherService.updatePrice(
+        req.user._id,
+        price
+      );
       return res.status(httpCode.OK).json({ isUpdated });
     } catch (err) {
       return next(err);
@@ -38,10 +40,21 @@ router.put(
 );
 
 router.put(
-  "/:id/tags",
+  "/me/tags",
   authenticateUser(),
   authorize(ROLES.teacher),
-  async (req, res, next) => {}
+  async (req, res, next) => {
+    const { tags } = req.body;
+
+    try {
+      const { isUpdated } = await teacherService.updateTags(req.user._id, tags);
+      return res.status(httpCode.OK).json({
+        isUpdated
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
 );
 
 module.exports = router;

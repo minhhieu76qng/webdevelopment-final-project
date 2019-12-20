@@ -56,5 +56,13 @@ module.exports = {
 
   updatePrice: async function(id, newPrice) {
     return await Teacher.updateOne({ _id: id }, { pricePerHour: newPrice });
+  },
+
+  updateTags: async function(id, tags) {
+    return await Teacher.updateOne({ _id: id }, { tags: tags });
+  },
+
+  findTeacherByAccountId: async function(id) {
+    return await Teacher.findOne({ accountId: id });
   }
 };
