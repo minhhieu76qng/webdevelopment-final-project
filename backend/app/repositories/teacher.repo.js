@@ -38,13 +38,24 @@ module.exports = {
       },
       {
         $project: {
-          _id: "$_id",
-          completedRate: "$completedRate",
-          totalJob: "$totalJob",
-          totalEarned: "$totalEarned",
-          hoursWorked: "$hoursWorked",
-          accountId: "$accountId",
-          pricePerHour: "$pricePerHour",
+          _id: 1,
+          completedRate: 1,
+          totalJob: 1,
+          totalEarned: 1,
+          hoursWorked: 1,
+          accountId: 1,
+          pricePerHour: 1,
+          intro: 1,
+          catId: 1,
+          // _id: "$_id",
+          // completedRate: "$completedRate",
+          // totalJob: "$totalJob",
+          // totalEarned: "$totalEarned",
+          // hoursWorked: "$hoursWorked",
+          // accountId: "$accountId",
+          // pricePerHour: "$pricePerHour",
+          // intro: 1,
+          // catId: 1,
           tag_list: {
             _id: 1,
             name: 1
@@ -64,5 +75,9 @@ module.exports = {
 
   findTeacherByAccountId: async function(id) {
     return await Teacher.findOne({ accountId: id });
+  },
+
+  updateIntro: async function(id, intro) {
+    return await Teacher.updateOne({ _id: id }, { intro: intro });
   }
 };

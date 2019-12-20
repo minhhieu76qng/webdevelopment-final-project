@@ -3,6 +3,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import UpdateInfoContainer from '../../../containers/UpdateInfoContainer';
 import ROLE from '../../../constance/Role';
 import TeachingInfo from './TeachingInfo';
+import UpdateIntro from './UpdateIntro';
 
 const Profile = ({ account, fetchCities }) => {
   useEffect(() => {
@@ -25,7 +26,9 @@ const Profile = ({ account, fetchCities }) => {
         )}
         {account && account.role === ROLE.teacher && (
           <Tab eventKey='introduce' title='Introduce'>
-            introduce
+            <div className='mt-4'>
+              <UpdateIntro />
+            </div>
           </Tab>
         )}
       </Tabs>

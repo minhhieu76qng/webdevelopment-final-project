@@ -57,4 +57,25 @@ router.put(
   }
 );
 
+router.put(
+  "/me/intro",
+  authenticateUser(),
+  authorize(ROLES.teacher),
+  async (req, res, next) => {
+    const { intro } = req.body;
+
+    try {
+      const { isUpdated } = await teacherService.updateIntro(
+        req.user._id,
+        intro
+      );
+      return res.status(httpCode.OK).json({
+        isUpdated
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 module.exports = router;

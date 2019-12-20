@@ -160,7 +160,7 @@ $
                       size='sm'
                       variant='primary'
                     >
-                      Save changes
+                      Save
                     </Button>
                   </div>
                 </Form>

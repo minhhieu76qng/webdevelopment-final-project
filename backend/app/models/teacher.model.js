@@ -33,6 +33,13 @@ const TeacherSchema = new Schema(
     hoursWorked: {
       type: Number,
       default: 0
+    },
+    intro: {
+      title: String,
+      content: String
+    },
+    catId: {
+      type: mongoose.Types.ObjectId
     }
   },
   { timestamps: true }

@@ -86,5 +86,30 @@ module.exports = {
     return {
       isUpdated: result.nModified >= 1
     };
+  },
+
+  updateIntro: async function(accountId, intro) {
+    if (!intro) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Missing intro object.");
+    }
+    if (!_.isString(intro.title)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Title must be a string.");
+    }
+    if (!_.isString(intro.content)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Content must be a string.");
+    }
+
+    // tim teacher
+    const teacher = await teacherRepo.findTeacherByAccountId(accountId);
+
+    if (!teacher) {
+      throw new ErrorHandler(httpCode.UNAUTHORIZED, "You are not a teacher.");
+    }
+
+    const result = await teacherRepo.updateIntro(teacher._id, intro);
+
+    return {
+      isUpdated: result.nModified === 1
+    };
   }
 };
