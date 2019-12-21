@@ -129,3 +129,74 @@ body {
     }
   }
 }
+.banner {
+  max-height: 350px;
+  overflow: hidden;
+  .carousel-item {
+    .carousel-caption {
+      bottom: auto;
+      right: auto;
+      left: 10%;
+      top: 10px;
+    }
+  }
+
+  .banner-title {
+    font-size: 30px;
+    font-weight: 900;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .banner {
+    .banner-title {
+      font-size: 21px;
+      font-weight: 700;
+    }
+  }
+}
+
+.presentative-teachers {
+  // overflow: hidden;
+  .slick-track {
+    padding-bottom: 20px;
+  }
+  .slick-teachers {
+    margin: 0 -10px;
+    .slick-item {
+      padding: 0 10px;
+      outline: none;
+    }
+  }
+}
+
+.statics {
+  .item {
+    text-align: center;
+    & > div:first-child {
+      font-size: 35px;
+      color: #162ec9;
+      font-weight: 700;
+    }
+    & > div {
+      font-size: 25px;
+      font-weight: 700;
+    }
+  }
+}
+
+.footer {
+  background-color: #2d3436;
+  color: #fff;
+  font-size: 20px;
+  padding: 50px 20px 0;
+  .logo {
+    max-width: 100%;
+  }
+  ul {
+    list-style-type: none;
+    li {
+      padding: 7px 0;
+    }
+  }
+}

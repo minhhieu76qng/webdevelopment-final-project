@@ -5,6 +5,7 @@ import routes from '../routes';
 import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
 import HeaderContainer from '../containers/HeaderContainer';
+import FooterContainer from '../containers/FooterContainer';
 
 const PageLayout = () => {
   const account = TokenStorage.decode();
@@ -33,7 +34,9 @@ const PageLayout = () => {
       <Container className='mt-4'>
         <Switch>{getRoutes()}</Switch>
       </Container>
-      {/* footer */}
+      <Container>
+        <FooterContainer />
+      </Container>
     </>
   );
 };

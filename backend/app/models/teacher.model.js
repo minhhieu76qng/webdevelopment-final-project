@@ -40,6 +40,10 @@ const TeacherSchema = new Schema(
     },
     catId: {
       type: mongoose.Types.ObjectId
+    },
+    firstUpdated: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

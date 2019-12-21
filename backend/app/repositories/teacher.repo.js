@@ -79,5 +79,92 @@ module.exports = {
 
   updateIntro: async function(id, intro) {
     return await Teacher.updateOne({ _id: id }, { intro: intro });
+  },
+
+  findImpressedTeachers: async function(limit) {
+    return await Teacher.aggregate([
+      {
+        $sort: {
+          completedRate: -1
+        }
+      },
+      {
+        $limit: limit
+      },
+      {
+        $lookup: {
+          from: "accounts",
+          localField: "accountId",
+          foreignField: "_id",
+          as: "account"
+        }
+      },
+      {
+        $match: {
+          "account.isBlock": false,
+          "account.isVerified": true
+        }
+      },
+      {
+        $unwind: {
+          path: "$account",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags_out"
+        }
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "catId",
+          foreignField: "_id",
+          as: "categories_out"
+        }
+      },
+      {
+        $lookup: {
+          from: "cities",
+          localField: "account.address.city",
+          foreignField: "_id",
+          as: "cities_out"
+        }
+      },
+      // {
+      //   $match: {
+      //     "categories_out.isDeleted": false,
+      //     "tags_out.isDeleted": false
+      //   }
+      // },
+      {
+        $project: {
+          _id: 1,
+          completedRate: 1,
+          totalJob: 1,
+          totalEarned: 1,
+          hoursWorked: 1,
+          pricePerHour: 1,
+          intro: 1,
+          "account._id": 1,
+          "account.google": 1,
+          "account.facebook": 1,
+          "account.local": 1,
+          "account.name": 1,
+          "account.avatar": 1,
+          "account.address": 1,
+          cities_out: 1,
+          categories_out: 1,
+          tags_out: 1
+        }
+      },
+      {
+        $limit: limit
+      }
+    ]);
   }
 };

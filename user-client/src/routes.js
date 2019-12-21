@@ -34,7 +34,7 @@ const routes = {
       layout: '',
     },
     {
-      path: '/detail',
+      path: '/teachers/:teacherId',
       name: 'Detail',
       component: TeacherDetail,
       layout: '',
@@ -55,6 +55,12 @@ const routes = {
       path: '/messages',
       name: 'Message',
       component: () => <div>messages</div>,
+      layout: '/account',
+    },
+    {
+      path: '/',
+      name: 'Home',
+      redirectPath: '/account/profile',
       layout: '/account',
     },
   ],

@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const httpCode = require("http-status-codes");
+const _ = require("lodash");
 const teacherService = require("../../services/teacher.service");
 const { authenticateUser, authorize } = require("../../middlewares/auth.mdw");
 const { ROLES } = require("../../constance/constance");
-const { ErrorHandler } = require("../../helpers/error.helper");
 
 router.get(
   "/me",
@@ -77,5 +77,22 @@ router.put(
     }
   }
 );
+
+// ---------------------------
+router.get("/impressed", async (req, res, next) => {
+  let limit = req.query.limit || 5;
+
+  limit = _.toInteger(limit);
+  if (!_.isInteger(limit)) {
+    limit = 5;
+  }
+
+  try {
+    const teachers = await teacherService.getImpressedTeacher(limit);
+    return res.status(httpCode.OK).json({ teachers });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;

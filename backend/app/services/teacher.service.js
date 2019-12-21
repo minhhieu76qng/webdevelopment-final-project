@@ -111,5 +111,29 @@ module.exports = {
     return {
       isUpdated: result.nModified === 1
     };
+  },
+
+  getImpressedTeacher: async function(limit) {
+    const teachers = await teacherRepo.findImpressedTeachers(limit);
+    // format data
+    let temp = [...teachers];
+    temp = temp.map(tch => {
+      let tmp = { ...tch };
+      delete tmp.tags_out;
+      delete tmp.categories_out;
+
+      delete tmp.cities_out;
+      tmp.tags = [...tch.tags_out];
+
+      if (tmp.account.address) {
+        delete tmp.account.address.city;
+        tmp.account.address.city = tch.cities_out[0];
+      }
+
+      delete tmp.catId;
+      tmp.categories = tch.categories_out[0];
+      return tmp;
+    });
+    return temp;
   }
 };

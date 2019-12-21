@@ -11,6 +11,9 @@ const AccountLayout = () => {
   const getStudentRoutes = () => {
     return routes.student.map(route => {
       if (route.layout === '/account') {
+        if (route.redirectPath) {
+          return <Redirect key={route.path} to={route.redirectPath} />;
+        }
         return (
           <Route
             path={route.layout + route.path}

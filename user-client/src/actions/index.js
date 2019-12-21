@@ -28,11 +28,12 @@ export function fetchCategories() {
 }
 
 export function fetchAccount() {
-  const accountInToken = TokenStorage.decode();
-  if (!accountInToken) {
-    // to login
-  }
   return dispatch => {
+    const accountInToken = TokenStorage.decode();
+    if (!accountInToken) {
+      dispatch(setUser(null));
+      return 0;
+    }
     return Axios.get(`/api/user/accounts/me`)
       .then(({ data: { account } }) => {
         dispatch(setUser(account));
