@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Nav, Image, Dropdown, Container } from 'react-bootstrap';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, NavLink } from 'react-router-dom';
 import _ from 'lodash';
 import logo from '../../assets/imgs/logo.png';
 import '../../assets/scss/Header.scss';
@@ -122,7 +122,7 @@ const HeaderComp = ({ account, categories, logOut }) => {
                       <Nav.Link
                         key={cat._id}
                         className='mr-md-4'
-                        as={Link}
+                        as={NavLink}
                         to={`/categories/${cat._id}`}
                       >
                         {cat.name}

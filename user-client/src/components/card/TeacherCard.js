@@ -25,8 +25,7 @@ const SkeletonLoadingCard = () => {
 const TeacherCard = ({ teacher, loading }) => {
   let cloneTeacher = null;
   if (teacher) {
-    const { firstName } = teacher.account.name;
-    const lastName = teacher.account.name.firstName;
+    const { firstName, lastName } = teacher.account.name;
     cloneTeacher = {
       name: `${firstName} ${lastName}`,
       avatar: teacher.account.avatar ? teacher.account.avatar : avatarDefault,

@@ -41,10 +41,18 @@ const routes = {
     },
     {
       path: '/',
+      exact: true,
       name: 'Home',
       component: Home,
       layout: '',
     },
+    {
+      path: '*',
+      name: 'Home',
+      component: () => <div>no route</div>,
+      layout: '',
+    },
+    // account
     {
       path: '/profile',
       name: 'Profile',

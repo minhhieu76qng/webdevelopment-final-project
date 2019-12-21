@@ -68,7 +68,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div style={{ backgroundColor: '#fff' }} className='shadow-lg'>
+    <div style={{ backgroundColor: '#fff' }} className='shadow-lg rounded'>
       <Banner />
 
       <div className='presentative-teachers mt-4'>

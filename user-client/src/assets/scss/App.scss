@@ -29,7 +29,8 @@ body {
     text-decoration: none;
     transition: all 0.3s;
 
-    &:hover {
+    &:hover,
+    &.active {
       color: $color-link !important;
     }
 
@@ -197,6 +198,15 @@ body {
     list-style-type: none;
     li {
       padding: 7px 0;
+    }
+  }
+}
+
+.list {
+  .card-horizontal {
+    border-top: 1px solid #b2bec3;
+    &:first-child {
+      border-top: none;
     }
   }
 }

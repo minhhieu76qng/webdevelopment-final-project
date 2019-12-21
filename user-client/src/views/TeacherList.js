@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
+import _ from 'lodash';
+import Axios from 'axios';
+import TeacherCardHorizontal from '../components/card/TeacherCardHorizontal';
+import { toast } from '../components/widgets/toast';
+
+const arrSkeleton = new Array(4).fill(0);
 
 const TeacherList = () => {
   const { catId } = useParams();
+  const [teachers, setTeachers] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+
+  useEffect(() => {
+    setIsFetching(true);
+    Axios.get(`/api/user/teachers/cat/${catId}`)
+      .then(({ data: { teacher: teachersRes } }) => {
+        setTeachers(teachersRes);
+      })
+      .catch(err => {
+        if (err && err.response && err.response.data.error) {
+          toast.error(err.response.data.error);
+        }
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
+  }, [catId]);
+
   return (
     <div className='teacher-list-page shadow bg-white rounded'>
       <div className='d-flex filter-sort-wrapper bg-light px-3 py-3'>
@@ -18,13 +43,18 @@ const TeacherList = () => {
           name='sort'
           style={{ maxWidth: 100 }}
         >
-          <option>asgf</option>
-          <option>asfdjk hskhdf kjsh khsdghsgf</option>
-          <option>asgf</option>
-          <option>asgf</option>
+          <option>A -&gt; Z</option>
+          <option>Z -&gt; A</option>
         </Form.Control>
       </div>
-      <div className='list'>{catId}</div>
+      <div className='list'>
+        {isFetching &&
+          arrSkeleton.map(() => <TeacherCardHorizontal loadding />)}
+        {!isFetching &&
+          _.isArray(teachers) &&
+          teachers.map(tch => <TeacherCardHorizontal teacher={tch} />)}
+        {/* no teacher */}
+      </div>
     </div>
   );
 };

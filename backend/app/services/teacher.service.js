@@ -132,8 +132,53 @@ module.exports = {
 
       delete tmp.catId;
       tmp.categories = tch.categories_out[0];
+
+      if (tmp.account.local) {
+        delete tmp.account.local.password;
+      }
+
       return tmp;
     });
     return temp;
+  },
+
+  getTeachersByCatId: async function(catId, limit, offset) {
+    if (!catId) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Category ID is not exist.");
+    }
+
+    let [teachers, total] = await Promise.all([
+      teacherRepo.findTeachersByCatId(catId, limit, offset),
+      teacherRepo.countByCatId(catId)
+    ]);
+
+    let temp = [...teachers];
+    temp = temp.map(tch => {
+      let tmp = { ...tch };
+      delete tmp.tags_out;
+      delete tmp.categories_out;
+
+      delete tmp.cities_out;
+      tmp.tags = [...tch.tags_out];
+
+      if (tmp.account.address) {
+        delete tmp.account.address.city;
+        tmp.account.address.city = tch.cities_out[0];
+      }
+
+      delete tmp.catId;
+      tmp.categories = tch.categories_out[0];
+
+      if (tmp.account.local) {
+        delete tmp.account.local.password;
+      }
+
+      return tmp;
+    });
+
+    return {
+      teachers: temp,
+      total
+    };
   }
 };

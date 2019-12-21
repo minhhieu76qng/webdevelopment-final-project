@@ -9,6 +9,7 @@ import PageLayout from './layouts/PageLayout';
 import AccountLayout from './layouts/AccountLayout';
 import ProtectedRoute from './routes/ProtectedRoute';
 import TokenStorage from './utils/TokenStorage';
+import ScrollToTop from './components/widgets/ScrollTop';
 
 function App({ fetchAccount, fetchCategories }) {
   useEffect(() => {
@@ -19,6 +20,7 @@ function App({ fetchAccount, fetchCategories }) {
   }, [fetchAccount, fetchCategories]);
   return (
     <div className='App user-page'>
+      <ScrollToTop />
       <Switch>
         <ProtectedRoute
           path='/account'

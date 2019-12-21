@@ -1,0 +1,75 @@
+$img-width: 110px;
+.card-horizontal {
+  padding: 20px 0;
+  .teacher-infomation {
+    display: flex;
+    width: 100%;
+
+    & > div {
+      padding: 0 20px;
+    }
+
+    .cover-img {
+      width: $img-width;
+
+      img {
+        max-width: 100%;
+      }
+    }
+
+    .infomation {
+      flex-grow: 1;
+
+      .teacher-name {
+        font-size: 18px;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      .job-success {
+        text-transform: uppercase;
+        color: #14bff4;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .blocks {
+    margin-top: 15px;
+    padding-left: $img-width;
+    .wrapper {
+      padding: 0 20px;
+
+      .tags {
+        list-style-type: none;
+        li {
+          display: inline-block;
+          margin-right: 15px;
+          .tag {
+            padding: 5px 7px;
+            font-size: 15px;
+            font-weight: 500;
+            background: #e0e0e0 !important;
+          }
+        }
+      }
+
+      .intro {
+        // max-height: 100px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.8375;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 575.99px) {
+  .card-horizontal {
+    .blocks {
+      padding-left: 0;
+    }
+  }
+}

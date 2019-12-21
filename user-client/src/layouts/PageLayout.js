@@ -18,6 +18,7 @@ const PageLayout = () => {
       if (route.layout === '') {
         return (
           <Route
+            exact={route.exact}
             path={route.layout + route.path}
             component={route.component}
             key={route.path}
@@ -34,9 +35,7 @@ const PageLayout = () => {
       <Container className='mt-4'>
         <Switch>{getRoutes()}</Switch>
       </Container>
-      <Container>
-        <FooterContainer />
-      </Container>
+      <FooterContainer />
     </>
   );
 };

@@ -2,8 +2,13 @@ import React from 'react';
 import { Row, Col, Image } from 'react-bootstrap';
 import FormUpdateInfo from '../../../containers/FormUpdateInfoContainer';
 import FormUploadAvatar from '../../../containers/FormUploadAvatarContainer';
+import avatarDefault from '../../../assets/imgs/avatar.jpg';
 
 const UpdateInfo = ({ account }) => {
+  let avatar = avatarDefault;
+  if (account && account.avatar) {
+    avatar = account.avatar;
+  }
   return (
     <Row>
       {account && (
@@ -11,7 +16,7 @@ const UpdateInfo = ({ account }) => {
           <div>
             <Image
               style={{ width: '100%', maxWidth: 200 }}
-              src={account.avatar}
+              src={avatar}
               thumbnail
             />
           </div>
