@@ -27,7 +27,7 @@ const HeaderComp = ({ account, categories, logOut }) => {
       className='header shadow sticky-top'
       style={{ backgroundColor: '#fff' }}
     >
-      <div style={{ borderBottom: '1px solid #ccc' }}>
+      <div id='top-header' style={{ borderBottom: '1px solid #ccc' }}>
         <Container>
           <Navbar
             style={{
@@ -62,13 +62,13 @@ const HeaderComp = ({ account, categories, logOut }) => {
                 </>
               )}
 
-              {(!account || (account && account.role === ROLE.student)) && (
+              {/* {(!account || (account && account.role === ROLE.student)) && (
                 <Nav.Item className='nav-item'>
                   <Link to='/new-job' className='button-link link'>
                     Post a job
                   </Link>
                 </Nav.Item>
-              )}
+              )} */}
               {account && (
                 <Nav.Item>
                   <Dropdown drop='down' className='custom-dropdown-menu'>

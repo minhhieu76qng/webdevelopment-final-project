@@ -1,9 +1,10 @@
-import { SET_USER, SET_CITIES, SET_CATEGORIES } from '../actions';
+import { SET_USER, SET_CITIES, SET_CATEGORIES, SET_TAGS } from '../actions';
 
 const initialState = {
   loggedAccount: null,
   categories: null,
   cities: null,
+  tags: null,
 };
 
 export default function(state = initialState, action) {
@@ -14,6 +15,8 @@ export default function(state = initialState, action) {
       return { ...state, cities: [...action.list] };
     case SET_CATEGORIES:
       return { ...state, categories: [...action.list] };
+    case SET_TAGS:
+      return { ...state, tags: [...action.list] };
     default:
       return state;
   }
