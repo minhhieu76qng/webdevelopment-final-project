@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navbar, Nav, Image, Dropdown, Container } from 'react-bootstrap';
 import { Link, useHistory, NavLink } from 'react-router-dom';
 import _ from 'lodash';
@@ -11,6 +11,22 @@ import ROLE from '../../constance/Role';
 
 const HeaderComp = ({ account, categories, logOut }) => {
   const history = useHistory();
+
+  useEffect(() => {
+    document.addEventListener('scroll', () => {
+      const topHeader = document.getElementById('top-header');
+      if (window.scrollY > topHeader.clientHeight) {
+        topHeader.style.height = 0;
+        topHeader.style.opacity = 0;
+        topHeader.style.pointerEvents = 'none';
+      } else {
+        topHeader.style.height = 'auto';
+        topHeader.style.opacity = 1;
+        topHeader.style.pointerEvents = 'auto';
+      }
+    });
+  }, []);
+
   let avatar = avatarImg;
   if (account && account.avatar) {
     avatar = account.avatar;

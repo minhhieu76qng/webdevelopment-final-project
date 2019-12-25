@@ -3,7 +3,7 @@
 $main-bg: #f2f2f2;
 $main-font-size: 14px;
 $main-font-weight: 400;
-$main-text-color: #000;
+$main-text-color: #222;
 $main-font: 'Roboto', sans-serif;
 
 $color-link: #162ec9;
@@ -21,6 +21,10 @@ body {
   font-weight: $main-font-weight;
   color: $main-text-color;
   background-color: $main-bg;
+}
+
+#top-header {
+  transition: all 0.3s ease;
 }
 
 .user-page {
@@ -148,15 +152,6 @@ body {
   }
 }
 
-@media screen and (max-width: 576px) {
-  .banner {
-    .banner-title {
-      font-size: 21px;
-      font-weight: 700;
-    }
-  }
-}
-
 .presentative-teachers {
   // overflow: hidden;
   .slick-track {
@@ -207,6 +202,62 @@ body {
     border-top: 1px solid #b2bec3;
     &:first-child {
       border-top: none;
+    }
+  }
+}
+
+.teacher-detail {
+  .statics {
+    ul {
+      list-style-type: none;
+      padding: 0 15px;
+      li {
+        display: inline-block;
+        // padding: 10px 0;
+        max-width: 120px;
+
+        .static-value {
+          font-size: 20px;
+          font-weight: 700;
+        }
+        .static-title {
+          color: #656565;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .banner {
+    .banner-title {
+      font-size: 21px;
+      font-weight: 700;
+    }
+  }
+
+  .teacher-detail {
+    .statics {
+      ul {
+        li {
+          max-width: none;
+        }
+      }
+    }
+  }
+}
+
+.tags {
+  list-style-type: none;
+  margin-bottom: 0;
+  li {
+    display: inline-block;
+    margin-right: 15px;
+    .tag {
+      padding: 5px 7px;
+      font-size: 15px;
+      font-weight: 500;
+      background: #e0e0e0 !important;
     }
   }
 }

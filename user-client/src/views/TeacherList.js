@@ -158,17 +158,6 @@ const TeacherList = () => {
       });
   }, [catId]);
 
-  useEffect(() => {
-    document.addEventListener('scroll', () => {
-      const topHeader = document.getElementById('top-header');
-      if (window.scrollY > topHeader.clientHeight) {
-        topHeader.style.display = 'none';
-      } else {
-        topHeader.style.display = 'block';
-      }
-    });
-  }, []);
-
   // functions
   const onSortChange = event => {
     event.persist();
@@ -179,6 +168,7 @@ const TeacherList = () => {
   };
 
   const setFilterObject = filterObj => {
+    setPage(1);
     setFilter(filterObj);
   };
 
@@ -263,12 +253,16 @@ const TeacherList = () => {
           temp.map(tch => (
             <TeacherCardHorizontal key={tch._id} teacher={tch} />
           ))}
-        {!isFetching && _.isArray(temp) && (
+        {!isFetching && paginateItems.length > 0 && (
           <div className='text-center mt-3'>
             <Pagination className='d-inline-flex'>{paginateItems}</Pagination>
           </div>
         )}
-        {/* no teacher */}
+        {!isFetching && _.isArray(temp) && temp.length === 0 && (
+          <p className='py-3 text-center font-italic text-dark'>
+            No teacher found.
+          </p>
+        )}
       </div>
     </div>
   );

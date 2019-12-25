@@ -97,29 +97,41 @@ router.get("/impressed", async (req, res, next) => {
 
 router.get("/cat/:catId", async (req, res, next) => {
   const { catId } = req.params;
-  let limit = req.query.limit || 10,
-    page = req.query.page || 1;
+  // let limit = req.query.limit || 10,
+  //   page = req.query.page || 1;
 
-  limit = _.toInteger(limit);
-  if (!_.isInteger(_.toInteger(limit))) {
-    limit = 10;
-  }
+  // limit = _.toInteger(limit);
+  // if (!_.isInteger(_.toInteger(limit))) {
+  //   limit = 10;
+  // }
 
-  page = _.toInteger(page);
-  if (!_.isInteger(_.toInteger(page))) {
-    page = 1;
-  }
+  // page = _.toInteger(page);
+  // if (!_.isInteger(_.toInteger(page))) {
+  //   page = 1;
+  // }
 
   try {
-    const { teachers, total } = await teacherService.getTeachersByCatId(
-      catId,
-      limit,
-      page - 1
+    const { teachers } = await teacherService.getTeachersByCatId(
+      catId
+      // limit,
+      // page - 1
     );
     return res.status(httpCode.OK).json({
-      teachers,
-      total
+      teachers
+      // total
     });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/:id", async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const teacher = await teacherService.getTeacherById(id);
+
+    return res.status(httpCode.OK).json({ teacher });
   } catch (err) {
     return next(err);
   }

@@ -11,7 +11,7 @@ import TeacherDetail from './views/TeacherDetail';
 import LoginContainer from './containers/LoginContainer';
 import SignUp from './views/SignUp';
 import ProfileContainer from './containers/ProfileContainer';
-import TeacherListContainer from './containers/TeacherListContainer';
+import TeacherList from './views/TeacherList';
 
 const routes = {
   student: [
@@ -30,7 +30,7 @@ const routes = {
     {
       path: '/categories/:catId',
       name: 'Categories',
-      component: TeacherListContainer,
+      component: TeacherList,
       layout: '',
     },
     {

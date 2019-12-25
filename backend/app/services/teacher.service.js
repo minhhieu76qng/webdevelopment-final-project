@@ -142,15 +142,12 @@ module.exports = {
     return temp;
   },
 
-  getTeachersByCatId: async function(catId, limit, offset) {
+  getTeachersByCatId: async function(catId) {
     if (!catId) {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Category ID is not exist.");
     }
 
-    let [teachers, total] = await Promise.all([
-      teacherRepo.findTeachersByCatId(catId, limit, offset),
-      teacherRepo.countByCatId(catId)
-    ]);
+    const teachers = await teacherRepo.findTeachersByCatId(catId);
 
     let temp = [...teachers];
     temp = temp.map(tch => {
@@ -177,8 +174,40 @@ module.exports = {
     });
 
     return {
-      teachers: temp,
-      total
+      teachers: temp
     };
+  },
+
+  getTeacherById: async function(teacherId) {
+    if (!teacherId) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Teacher ID is not valid.");
+    }
+
+    const result = await teacherRepo.findTeacherById(teacherId);
+    let temp = null;
+
+    if (_.isArray(result) && result.length > 0) {
+      temp = { ...result[0] };
+    }
+
+    delete temp.tags_out;
+    delete temp.categories_out;
+
+    delete temp.cities_out;
+    temp.tags = [...result[0].tags_out];
+
+    if (temp.account.address) {
+      delete temp.account.address.city;
+      temp.account.address.city = result[0].cities_out[0];
+    }
+
+    delete temp.catId;
+    temp.categories = result[0].categories_out[0];
+
+    if (temp.account.local) {
+      delete temp.account.local.password;
+    }
+
+    return temp;
   }
 };

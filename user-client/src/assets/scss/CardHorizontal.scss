@@ -40,20 +40,6 @@ $img-width: 110px;
     .wrapper {
       padding: 0 20px;
 
-      .tags {
-        list-style-type: none;
-        li {
-          display: inline-block;
-          margin-right: 15px;
-          .tag {
-            padding: 5px 7px;
-            font-size: 15px;
-            font-weight: 500;
-            background: #e0e0e0 !important;
-          }
-        }
-      }
-
       .intro {
         // max-height: 100px;
         display: -webkit-box;
