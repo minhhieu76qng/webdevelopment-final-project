@@ -9,7 +9,7 @@ const Sidebar = ({ routes }) => {
       <ListGroup as='ul'>
         {_.isArray(routes) &&
           routes.map(route => {
-            if (route.redirectPath) {
+            if (route.redirectPath || !route.sidebar) {
               return null;
             }
             return (

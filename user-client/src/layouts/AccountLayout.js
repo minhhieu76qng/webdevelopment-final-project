@@ -29,26 +29,23 @@ const AccountLayout = () => {
 
   const getTeacherRoutes = () => {
     return routes.teacher.map(route => {
-      if (route.layout === '/t') {
-        if (route.redirectPath) {
-          return <Redirect key={route.path} to={route.redirectPath} />;
-        }
-        return (
-          <Route
-            path={route.layout + route.path}
-            component={route.component}
-            key={route.path}
-          />
-        );
+      if (route.redirectPath) {
+        return <Redirect key={route.path} to={route.redirectPath} />;
       }
-      return null;
+      return (
+        <Route
+          path={route.layout + route.path}
+          component={route.component}
+          key={route.path}
+        />
+      );
     });
   };
 
   const account = TokenStorage.decode();
 
   if (!account) {
-    return <Redirect to='/login' />;
+    return <Redirect to='/' />;
   }
 
   if (account.role !== ROLE.student && account.role !== ROLE.teacher) {

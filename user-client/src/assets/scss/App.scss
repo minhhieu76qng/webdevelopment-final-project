@@ -33,6 +33,11 @@ body {
     text-decoration: none;
     transition: all 0.3s;
 
+    &.no-effect:hover,
+    &.no-effect:active {
+      color: inherit !important;
+    }
+
     &:hover,
     &.active {
       color: $color-link !important;

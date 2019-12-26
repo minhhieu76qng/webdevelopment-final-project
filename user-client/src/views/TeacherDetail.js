@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Row, Col, Image, Badge } from 'react-bootstrap';
+import { Row, Col, Image, Badge, FormControl, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import _ from 'lodash';
+import shortid from 'shortid';
 import Fade from 'react-reveal/Fade';
 import Skeleton from 'react-loading-skeleton';
 import Axios from 'axios';
@@ -62,6 +63,7 @@ const TeacherDetail = () => {
       tags: teacher.tags && _.isArray(teacher.tags) ? teacher.tags : null,
       introTitle: teacher.intro ? teacher.intro.title : null,
       introContent: teacher.intro ? teacher.intro.content : null,
+      accountId: teacher.account ? teacher.account._id : null,
     };
   }
 
@@ -83,7 +85,7 @@ const TeacherDetail = () => {
                   <div style={{ flexGrow: 1, paddingLeft: 30 }}>
                     <Row>
                       <Col xs={12} sm={8} md={9}>
-                        <p style={{ fontSize: 20 }} className='mb-1'>
+                        <p style={{ fontSize: 24 }} className='mb-1'>
                           {cloneTeacher.name}
                         </p>
                         <p className='font-weight-bold'>
@@ -168,7 +170,7 @@ $
                   <ul className='tags'>
                     {_.isArray(cloneTeacher.tags) &&
                       cloneTeacher.tags.map(tag => (
-                        <li>
+                        <li key={shortid.generate()}>
                           <Badge className='tag' variant='light'>
                             {tag.name}
                           </Badge>
@@ -179,7 +181,31 @@ $
               </div>
             </Col>
             <Col xs={12} md={3}>
-              <div className='mt-3 mt-sm-0 bg-white rounded shadow-lg'>
+              <Button
+                className='mt-4 mt-md-0 font-weight-bold'
+                variant='success'
+                // size='sm'
+                block
+              >
+                Hire this teacher
+              </Button>
+
+              <Link
+                style={{ textTransform: 'unset', width: '100%' }}
+                className='link button-link mt-3 text-center'
+                to={{
+                  pathname: `/account/messages/${cloneTeacher.accountId}`,
+                  state: { to: `/account/messages/${cloneTeacher.accountId}` },
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  className='d-inline-block mr-2'
+                />
+                Send Message
+              </Link>
+
+              <div className='mt-3 bg-white rounded shadow-lg'>
                 <p
                   className='font-weight-bold px-4 py-4 bg-light border-bottom'
                   style={{ fontSize: 16, marginBottom: 0 }}
@@ -190,27 +216,17 @@ $
 .
                 </p>
                 <div className='px-3 py-3'>
-                  <p>
-                    Email:
-                    {' '}
-                    <span
-                      className='font-italic font-weight-bold'
-                      style={{ fontSize: 16 }}
-                    >
-                      {cloneTeacher.email}
-                    </span>
-                  </p>
-                  <Link
-                    style={{ textTransform: 'unset' }}
-                    className='link button-link'
-                    to={`/account/messages/${cloneTeacher._id}`}
-                  >
-                    <FontAwesomeIcon
-                      icon={faEnvelope}
-                      className='d-inline-block mr-2'
+                  <div>
+                    <FormControl
+                      id='email-box'
+                      size='sm'
+                      disabled
+                      plaintext
+                      readOnly
+                      defaultValue={cloneTeacher.email}
+                      title='Click to copy email'
                     />
-                    Send Message
-                  </Link>
+                  </div>
                 </div>
               </div>
             </Col>

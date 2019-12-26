@@ -5,6 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import _ from 'lodash';
 import { Row, Col } from 'react-bootstrap';
+import shortid from 'shortid';
 import { toast } from '../components/widgets/toast';
 import Banner from '../components/banner/Banner';
 import TeacherCard from '../components/card/TeacherCard';
@@ -75,7 +76,7 @@ const Home = () => {
         <Slider {...settings} className='slick-teachers'>
           {isFetching &&
             SkeletonArr.map(() => (
-              <div className='slick-item'>
+              <div key={shortid.generate()} className='slick-item'>
                 <TeacherCard loading />
               </div>
             ))}

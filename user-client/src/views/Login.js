@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import {
   Row,
   Col,
@@ -43,6 +43,9 @@ const schema = yup.object({
 
 const Login = ({ fetchAccount }) => {
   const history = useHistory();
+  const location = useLocation();
+
+  const redirectPath = location.state ? location.state.to : '/';
 
   const [socialLogin, setSocialLogin] = useState({ type: null, token: null });
   const [showJobModal, setShowJobModal] = useState(false);
@@ -61,11 +64,17 @@ const Login = ({ fetchAccount }) => {
       .then(({ data: { token } }) => {
         TokenStorage.set(token);
         fetchAccount();
-        history.push('/');
+        history.push(redirectPath);
       })
-      .catch(({ response: { data: { error } } }) => {
-        toast.error(error.msg);
-      })
+      .catch(
+        ({
+          response: {
+            data: { error },
+          },
+        }) => {
+          toast.error(error.msg);
+        },
+      )
       .finally(() => {
         setSubmitting(false);
       });
@@ -86,7 +95,7 @@ const Login = ({ fetchAccount }) => {
         }
         TokenStorage.set(data.token);
         fetchAccount();
-        history.push('/');
+        history.push(redirectPath);
       })
       .catch(err => {
         if (err.response.data.error) {
