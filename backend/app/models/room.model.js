@@ -1,15 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const RoomSchema = new Schema(
-  {
-    account: {
-      type: Array,
-      required: true
+const RoomSchema = new Schema({
+  accounts: [
+    {
+      type: mongoose.Types.ObjectId
     }
-  },
-  { timestamps: true }
-);
+  ],
+  createdBy: mongoose.Types.ObjectId
+});
 
 const Room = mongoose.model("rooms", RoomSchema);
 

@@ -194,8 +194,10 @@ $
                 style={{ textTransform: 'unset', width: '100%' }}
                 className='link button-link mt-3 text-center'
                 to={{
-                  pathname: `/account/messages/${cloneTeacher.accountId}`,
-                  state: { to: `/account/messages/${cloneTeacher.accountId}` },
+                  pathname: `/account/messages/?to=${cloneTeacher.accountId}`,
+                  state: {
+                    to: `/account/messages/?to=${cloneTeacher.accountId}`,
+                  },
                 }}
               >
                 <FontAwesomeIcon
