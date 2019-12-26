@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { useParams } from 'react-router-dom';
 import _ from 'lodash';
 import { sendMessage } from '../../socket/SocketManager';
 import { toast } from '../widgets/toast';
@@ -14,18 +13,14 @@ const schema = yup.object().shape({
   msg: yup.string().required(),
 });
 
-const ChatBox = ({ onSend }) => {
-  const { toUserId } = useParams();
+const ChatBox = ({ onSend, roomId }) => {
   const account = TokenStorage.decode();
 
   const onChatSubmit = (values, resetForm) => {
-    if (!toUserId || !_.isString(toUserId)) {
-      toast.error('Not found user id.');
-      return;
-    }
     const { msg } = values;
-    onSend({ from: account._id, to: toUserId, msg, time: new Date() });
-    sendMessage({ to: toUserId, msg }, error => {
+    onSend({ from: account._id, msg, time: new Date() });
+
+    sendMessage({ roomId, msg }, error => {
       if (_.isString(error)) {
         toast.error(error);
         return;

@@ -8,6 +8,8 @@ import shortid from 'shortid';
 import queryString from 'query-string';
 import avatarDefault from '../../assets/imgs/avatar.jpg';
 import { toast } from '../widgets/toast';
+import { instance as socket } from '../../socket/SocketManager';
+import { RCV_MESSAGE } from '../../socket/socketConst';
 
 const skeleton = new Array(5).fill(0);
 
@@ -47,6 +49,12 @@ const ChatList = () => {
         }
       });
   };
+
+  useEffect(() => {
+    socket.on(RCV_MESSAGE, () => {
+      fetchRooms();
+    });
+  }, []);
 
   const createRoom = useCallback(() => {
     Axios.post('/api/user/chats/rooms', { toAccount: to })

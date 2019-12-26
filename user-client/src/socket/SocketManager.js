@@ -14,10 +14,10 @@ export function connect() {
   }
 }
 
-export function sendMessage({ to, msg }, callback) {
+export function sendMessage({ roomId, msg }, callback) {
   const account = TokenStorage.decode();
   if (account && account._id) {
     const current = new Date();
-    socket.emit(SEND_MESSAGE, { to, msg, date: current }, callback);
+    socket.emit(SEND_MESSAGE, { roomId, msg, date: current }, callback);
   }
 }

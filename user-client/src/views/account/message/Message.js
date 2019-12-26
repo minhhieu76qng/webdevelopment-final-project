@@ -26,7 +26,7 @@ const Message = () => {
     if (room) {
       setFetching(true);
       Axios.get(`/api/user/chats/rooms/${room}/messages`)
-        .then(({ data: { chats: list } }) => {
+        .then(({ data: { messages: list } }) => {
           setMessages(list);
         })
         .catch(err => {
@@ -84,7 +84,7 @@ const Message = () => {
           )}
         </div>
         <div className='chat-box'>
-          <ChatBox onSend={sendMessage} />
+          <ChatBox onSend={sendMessage} roomId={room} />
         </div>
       </div>
     </div>

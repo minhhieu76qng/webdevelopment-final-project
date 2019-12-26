@@ -1,4 +1,5 @@
 const pIO = require("socket.io");
+const _ = require("lodash");
 const chatService = require("./services/chat.service");
 module.exports = function(server) {
   const io = pIO(server);
@@ -20,17 +21,22 @@ module.exports = function(server) {
     socket.on("SEND_MESSAGE", async (data, callback) => {
       let payload = { ...data };
       payload.from = socket.accountId;
+      console.log(payload);
       // luu vao trong db
       try {
-        const result = await chatService.addNewMessage(payload);
+        const result = await chatService.createMessage(payload);
         if (result) {
-          if (payload.to in activeUser) {
+          const [to] = result.room.accounts.filter(
+            val => _.toString(val) !== _.toString(payload.from)
+          );
+          if (to in activeUser) {
             // emit event toi socket con lai
-            activeUser[payload.to].emit("RECEIVE_MESSAGE", result);
+            activeUser[to].emit("RECEIVE_MESSAGE", result.message);
           }
           callback();
         }
       } catch (err) {
+        console.log(err);
         callback("Can't send message");
       }
     });

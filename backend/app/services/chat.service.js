@@ -27,7 +27,16 @@ module.exports = {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Room not found.");
     }
 
-    return await chatRepo.createMessage({ from, roomId, msg, current });
+    const message = await chatRepo.createMessage({
+      from,
+      roomId,
+      msg,
+      current
+    });
+    return {
+      room,
+      message
+    };
   },
 
   getRooms: async function(accountId) {
