@@ -20,6 +20,17 @@ const Message = () => {
   const [messages, setMessages] = useState([]);
   const [isFetching, setFetching] = useState(false);
 
+  const scrollBottom = () => {
+    const el = document.querySelector(
+      '#messages-scroll .simplebar-content-wrapper',
+    );
+    el.scrollTo({
+      top: el.scrollHeight,
+      left: 0,
+      behavior: 'smooth',
+    });
+  };
+
   useEffect(() => {
     connect();
   }, []);
@@ -30,6 +41,9 @@ const Message = () => {
       Axios.get(`/api/user/chats/rooms/${room}/messages`)
         .then(({ data: { messages: list } }) => {
           setMessages(list);
+          setTimeout(() => {
+            scrollBottom();
+          }, 100);
         })
         .catch(err => {
           if (err && err.response && err.response.data.error) {
@@ -41,13 +55,6 @@ const Message = () => {
         });
     }
   }, [room]);
-
-  const scrollBottom = () => {
-    const el = document.querySelector(
-      '#messages-scroll .simplebar-content-wrapper',
-    );
-    el.scrollTo(0, el.clientHeight);
-  };
 
   useEffect(() => {
     socket.on(RCV_MESSAGE, data => {
