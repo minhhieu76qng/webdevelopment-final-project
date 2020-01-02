@@ -77,10 +77,10 @@ module.exports = {
     return await tagRepo.findActive();
   },
 
-  isValidTag: async function(tagId) {
+  getActiveById: async function(tagId) {
     if (!_.isString(tagId)) {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Tag id must be a string");
     }
-    return await tagRepo.findOne(tagId);
+    return await tagRepo.getActiveById(tagId);
   }
 };

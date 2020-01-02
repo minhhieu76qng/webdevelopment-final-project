@@ -13,6 +13,8 @@ import SignUp from './views/SignUp';
 import ProfileContainer from './containers/ProfileContainer';
 import TeacherList from './views/TeacherList';
 import Message from './views/account/message/Message';
+import Contract from './views/account/contract/Contract';
+import WelcomeContainer from './containers/WelcomeContainer';
 
 const routes = {
   student: [
@@ -77,6 +79,14 @@ const routes = {
       icon: <FontAwesomeIcon icon={faEnvelope} />,
     },
     {
+      sidebar: true,
+      path: '/contracts',
+      name: 'Contracts',
+      component: Contract,
+      layout: '/account',
+      icon: <FontAwesomeIcon icon={faAddressCard} />,
+    },
+    {
       path: '/',
       name: 'Home',
       redirectPath: '/account/profile',
@@ -101,12 +111,6 @@ const routes = {
       icon: <FontAwesomeIcon icon={faIdBadge} />,
     },
     {
-      path: '/messages/:toUserId',
-      name: 'Messages',
-      component: Message,
-      layout: '/account',
-    },
-    {
       sidebar: true,
       path: '/messages',
       name: 'Messages',
@@ -118,9 +122,16 @@ const routes = {
       sidebar: true,
       path: '/contracts',
       name: 'Contracts',
-      component: () => <div>contracts</div>,
+      component: Contract,
       layout: '/account',
       icon: <FontAwesomeIcon icon={faAddressCard} />,
+    },
+    {
+      exact: true,
+      path: '/welcome',
+      name: 'Welcome',
+      component: WelcomeContainer,
+      layout: '/account',
     },
     {
       exact: true,

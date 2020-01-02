@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const httpCode = require("http-status-codes");
 const accountService = require("../../services/account.service");
+const teacherService = require("../../services/teacher.service");
 const { ErrorHandler } = require("../../helpers/error.helper");
 const { authorize, authenticateUser } = require("../../middlewares/auth.mdw");
 const { ROLES } = require("../../constance/constance");
@@ -9,12 +10,23 @@ router.get(
   "/me",
   authenticateUser(),
   authorize([ROLES.student, ROLES.teacher]),
-  (req, res, next) => {
-    let temp = req.user;
-    delete temp.local.password;
-    return res.status(httpCode.OK).json({
-      account: temp
-    });
+  async (req, res, next) => {
+    let temp = { ...req.user._doc };
+    if (temp.local) {
+      delete temp.local.password;
+    }
+
+    try {
+      const teacher = await teacherService.getTeacherTags(req.user._id);
+      if (teacher) {
+        temp.teacher = teacher;
+      }
+      return res.status(httpCode.OK).json({
+        account: temp
+      });
+    } catch (err) {
+      return next(err);
+    }
   }
 );
 

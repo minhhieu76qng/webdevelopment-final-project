@@ -1,8 +1,13 @@
 const _ = require("lodash");
+const mongoose = require("mongoose");
 const httpCode = require("http-status-codes");
 const { ErrorHandler } = require("../helpers/error.helper");
 const teacherRepo = require("../repositories/teacher.repo");
+const accountRepo = require("../repositories/account.repo");
 const tagService = require("./tag.service");
+const categoryService = require("./category.service");
+const cityService = require("./city.service");
+
 module.exports = {
   getTeacherTags: async function(accountId) {
     const arr = await teacherRepo.getTags(accountId);
@@ -62,7 +67,7 @@ module.exports = {
 
     // kiem tra tags co hop le hay khong
     const validTags = await Promise.all(
-      tags.map(val => tagService.isValidTag(val))
+      tags.map(val => tagService.getActiveById(val))
     );
 
     // filter valid id
@@ -209,5 +214,106 @@ module.exports = {
     }
 
     return temp;
+  },
+
+  firstUpdate: async function(accountId, data) {
+    let payload = { ...data };
+    payload.price = _.toNumber(payload.price);
+    // validate input
+    if (!(_.isString(payload.city) && payload.city.length > 0)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "City must be a string.");
+    }
+    if (!(_.isString(payload.category) && payload.category.length > 0)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Category must be a string."
+      );
+    }
+    if (!(_.isArray(payload.tags) && payload.tags.length > 0)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Tags must be a array with at least one item."
+      );
+    }
+    if (!_.isNumber(payload.price)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Price must be a number.");
+    }
+
+    if (!(payload.price >= 5 && payload.price <= 1000)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Price must be between 5 and 1000."
+      );
+    }
+
+    // tim teacher
+    const teacher = await teacherRepo.findTeacherByAccountId(accountId);
+
+    if (!teacher) {
+      throw new ErrorHandler(httpCode.UNAUTHORIZED, "You are not a teacher.");
+    }
+
+    if (teacher.firstUpdated === true) {
+      throw new ErrorHandler(
+        httpCode.FORBIDDEN,
+        "You are not allow to update again."
+      );
+    }
+
+    // validate payload trong db
+    // kiem tra category co trong db
+    const [category, city] = await Promise.all([
+      categoryService.getActiveById(payload.category),
+      cityService.getById(payload.city)
+    ]);
+
+    if (!category) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Category is not exist.");
+    }
+    if (!city) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "City is not exist.");
+    }
+
+    let validTags = await Promise.all(
+      payload.tags.map(val => tagService.getActiveById(val))
+    );
+    if (!validTags) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Tags are not exist.");
+    }
+
+    validTags = validTags.filter(val => val !== null);
+    validTags = validTags.map(val => val._id);
+
+    if (validTags.length === 0) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Missing tags.");
+    }
+
+    try {
+      const _session = await mongoose.startSession();
+      _session.startTransaction();
+
+      const teacherResult = await teacherRepo.firstUpdate(
+        teacher._id,
+        { ...payload, tags: validTags },
+        _session
+      );
+      const accountResult = await accountRepo.updateCity(
+        teacher.accountId,
+        payload.city,
+        _session
+      );
+
+      await _session.commitTransaction();
+      _session.endSession();
+
+      return {
+        isUpdated:
+          teacherResult.nModified === 1 && accountResult.nModified === 1
+      };
+    } catch (err) {
+      await _session.abortTransaction();
+      _session.endSession();
+      throw err;
+    }
   }
 };

@@ -43,26 +43,6 @@ const FormUpdateTags = ({ teacher, fetchTeacher }) => {
 
   const formEditTagsSubmit = (values, setSubmitting) => {
     const temp = values.select_tags.map(val => val.value);
-    // kiem tra co them moi hay xoa tag hay khong
-    // let isEditted = false;
-    // if (temp.length === teacher.tags.length) {
-    //   for (let i = 0; i < temp.length; i += 1) {
-    //     for (let j = 0; j < teacher.tags; j += 1) {
-    //       if (!(teacher.tags[j]._id === temp[i])) {
-    //         isEditted = true;
-    //         break;
-    //       }
-    //     }
-    //   }
-    // } else {
-    //   isEditted = true;
-    // }
-
-    // if (!isEditted) {
-    //   toast.warn('You must add or remove tags to submit form.');
-    //   setSubmitting(false);
-    //   return;
-    // }
 
     Axios.put(`/api/user/teachers/me/tags`, { tags: temp })
       .then(({ data: { isUpdated } }) => {

@@ -6,6 +6,8 @@ import TokenStorage from '../utils/TokenStorage';
 import ROLE from '../constance/Role';
 import Sidebar from '../components/sidebar/Sidebar';
 import HeaderAccountContainer from '../containers/HeaderAccountContainer';
+import WelcomeContainer from '../containers/WelcomeContainer';
+import TeacherWrapper from '../views/account/TeacherWrapper';
 
 const AccountLayout = () => {
   const getStudentRoutes = () => {
@@ -42,21 +44,24 @@ const AccountLayout = () => {
     });
   };
 
-  const account = TokenStorage.decode();
+  const accountToken = TokenStorage.decode();
 
-  if (!account) {
+  if (!accountToken) {
     return <Redirect to='/' />;
   }
 
-  if (account.role !== ROLE.student && account.role !== ROLE.teacher) {
+  if (
+    accountToken.role !== ROLE.student &&
+    accountToken.role !== ROLE.teacher
+  ) {
     return <Redirect to='/' />;
   }
 
   let links = null;
-  if (account.role === ROLE.student) {
+  if (accountToken.role === ROLE.student) {
     links = routes.student.filter(val => val.layout === '/account');
   }
-  if (account.role === ROLE.teacher) {
+  if (accountToken.role === ROLE.teacher) {
     links = routes.teacher;
   }
   return (
@@ -81,8 +86,13 @@ const AccountLayout = () => {
               style={{ background: '#fff', margin: 15, padding: 15 }}
             >
               <Switch>
-                {account.role === ROLE.student && getStudentRoutes()}
-                {account.role === ROLE.teacher && getTeacherRoutes()}
+                {accountToken.role === ROLE.student && getStudentRoutes()}
+                {accountToken.role === ROLE.teacher && (
+                  <Route path='/account/welcome' component={WelcomeContainer} />
+                )}
+                <TeacherWrapper>
+                  {accountToken.role === ROLE.teacher && getTeacherRoutes()}
+                </TeacherWrapper>
               </Switch>
             </div>
           </Col>

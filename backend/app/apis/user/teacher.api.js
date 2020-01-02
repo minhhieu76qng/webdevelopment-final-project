@@ -78,6 +78,23 @@ router.put(
   }
 );
 
+router.put(
+  "/me/welcome",
+  authenticateUser(),
+  authorize(ROLES.teacher),
+  async (req, res, next) => {
+    try {
+      const { isUpdated } = await teacherService.firstUpdate(
+        req.user._id,
+        req.body
+      );
+      return res.status(200).json({ isUpdated });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 // ---------------------------
 router.get("/impressed", async (req, res, next) => {
   let limit = req.query.limit || 5;

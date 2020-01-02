@@ -26,10 +26,10 @@ function App({ fetchAccount, fetchCategories }) {
           path='/account'
           render={props => <AccountLayout {...props} />}
         />
-        <ProtectedRoute
+        {/* <ProtectedRoute
           path='/t'
           render={props => <AccountLayout {...props} />}
-        />
+        /> */}
         <Route path='/' render={props => <PageLayout {...props} />} />
 
         <Route path='*' render={() => <div>no route</div>} />

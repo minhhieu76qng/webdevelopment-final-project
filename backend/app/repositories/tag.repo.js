@@ -48,7 +48,7 @@ module.exports = {
     return await Tag.countDocuments();
   },
 
-  findOne: async function(id) {
+  getActiveById: async function(id) {
     return await Tag.findOne({ _id: id, isDeleted: false });
   }
 };

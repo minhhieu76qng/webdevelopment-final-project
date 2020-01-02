@@ -41,11 +41,8 @@
     }
 
     .messages {
-      overflow-y: scroll;
-      height: calc(100% - 45px);
       width: 100%;
-      padding-right: 10px;
-
+      height: calc(100% - 45px);
       .list {
         list-style-type: none;
         li {
@@ -96,6 +93,7 @@
 }
 
 .scroll {
+  overflow-y: scroll;
   &::-webkit-scrollbar {
     width: 7px;
     opacity: 0;

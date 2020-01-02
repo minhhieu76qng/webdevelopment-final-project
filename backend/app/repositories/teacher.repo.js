@@ -47,19 +47,11 @@ module.exports = {
           pricePerHour: 1,
           intro: 1,
           catId: 1,
-          // _id: "$_id",
-          // completedRate: "$completedRate",
-          // totalJob: "$totalJob",
-          // totalEarned: "$totalEarned",
-          // hoursWorked: "$hoursWorked",
-          // accountId: "$accountId",
-          // pricePerHour: "$pricePerHour",
-          // intro: 1,
-          // catId: 1,
           tag_list: {
             _id: 1,
             name: 1
-          }
+          },
+          firstUpdated: 1
         }
       }
     ]);
@@ -90,6 +82,11 @@ module.exports = {
       },
       {
         $limit: limit
+      },
+      {
+        $match: {
+          firstUpdated: true
+        }
       },
       {
         $lookup: {
@@ -169,7 +166,8 @@ module.exports = {
     return await Teacher.aggregate([
       {
         $match: {
-          catId: ObjectId(catId)
+          catId: ObjectId(catId),
+          firstUpdated: true
         }
       },
       {
@@ -258,14 +256,18 @@ module.exports = {
   },
 
   countByCatId: async function(catId) {
-    return await Teacher.where({ catId: catId }).countDocuments();
+    return await Teacher.where({
+      catId: catId,
+      firstUpdated: true
+    }).countDocuments();
   },
 
   findTeacherById: async function(teacherId) {
     return await Teacher.aggregate([
       {
         $match: {
-          _id: ObjectId(teacherId)
+          _id: ObjectId(teacherId),
+          firstUpdated: true
         }
       },
       {
@@ -340,5 +342,17 @@ module.exports = {
         }
       }
     ]);
+  },
+
+  firstUpdate: async function(
+    teacherId,
+    { category, price, tags },
+    session = null
+  ) {
+    return Teacher.updateOne(
+      { _id: teacherId },
+      { catId: category, tags: tags, pricePerHour: price, firstUpdated: true },
+      { session }
+    );
   }
 };

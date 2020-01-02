@@ -10,7 +10,7 @@ import FooterContainer from '../containers/FooterContainer';
 const PageLayout = () => {
   const account = TokenStorage.decode();
   if (account && account.role === ROLE.teacher) {
-    return <Redirect to='/t' />;
+    return <Redirect to='/account' />;
   }
 
   const getRoutes = () => {
