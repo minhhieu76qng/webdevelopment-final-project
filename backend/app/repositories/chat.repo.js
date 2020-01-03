@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const { ObjectId } = require("mongoose").Types;
 const { Message } = require("../models/message.model");
 const { Room } = require("../models/room.model");
@@ -62,8 +63,13 @@ module.exports = {
   },
 
   checkExistRoom: async function(from, to) {
-    return await Room.find({
+    const rooms = await Room.find({
       accounts: { $all: [ObjectId(from), ObjectId(to)] }
     });
+
+    if (_.isArray(rooms) && rooms.length > 0) {
+      return rooms[0];
+    }
+    return null;
   }
 };

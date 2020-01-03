@@ -288,10 +288,9 @@ module.exports = {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Missing tags.");
     }
 
+    const _session = await mongoose.startSession();
+    _session.startTransaction();
     try {
-      const _session = await mongoose.startSession();
-      _session.startTransaction();
-
       const teacherResult = await teacherRepo.firstUpdate(
         teacher._id,
         { ...payload, tags: validTags },

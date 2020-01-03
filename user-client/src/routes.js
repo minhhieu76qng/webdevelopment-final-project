@@ -13,7 +13,7 @@ import SignUp from './views/SignUp';
 import ProfileContainer from './containers/ProfileContainer';
 import TeacherList from './views/TeacherList';
 import Message from './views/account/message/Message';
-import Contract from './views/account/contract/Contract';
+import Contract from './views/account/contract';
 import WelcomeContainer from './containers/WelcomeContainer';
 
 const routes = {
@@ -127,13 +127,13 @@ const routes = {
       component: WelcomeContainer,
       layout: '/account',
     },
-    {
-      exact: true,
-      path: '/',
-      name: 'Home',
-      redirectPath: '/account/dashboard',
-      layout: '/account',
-    },
+    // {
+    //   exact: true,
+    //   path: '/',
+    //   name: 'Home',
+    //   redirectPath: '/account/dashboard',
+    //   layout: '/account',
+    // },
   ],
 };
 

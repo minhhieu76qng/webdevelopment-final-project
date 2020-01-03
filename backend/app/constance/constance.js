@@ -6,5 +6,11 @@ module.exports = {
     root: "ROOT",
     admin: "ADMIN"
   },
-  SALT_ROUND: 10
+  SALT_ROUND: 10,
+  CONTRACT_STATUS: {
+    pending: "PENDING",
+    teaching: "TEACHING",
+    paid: "PAID",
+    complain: "COMPLAIN"
+  }
 };

@@ -86,7 +86,7 @@ module.exports = {
 
     // kiem tra cac room da co from va to hay chua
     const exists = await chatRepo.checkExistRoom(from, to);
-    if (exists && exists.length > 0) {
+    if (exists) {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Room is existed");
     }
 
@@ -108,5 +108,9 @@ module.exports = {
     }
 
     return await chatRepo.findMsgInRoom(roomId);
+  },
+
+  findRoomWithUsers: async function(userId1, userId2) {
+    return await chatRepo.checkExistRoom(userId1, userId2);
   }
 };
