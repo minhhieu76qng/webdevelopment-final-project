@@ -15,14 +15,16 @@ const HeaderComp = ({ account, categories, logOut }) => {
   useEffect(() => {
     document.addEventListener('scroll', () => {
       const topHeader = document.getElementById('top-header');
-      if (window.scrollY > topHeader.clientHeight) {
-        topHeader.style.height = 0;
-        topHeader.style.opacity = 0;
-        topHeader.style.pointerEvents = 'none';
-      } else {
-        topHeader.style.height = 'auto';
-        topHeader.style.opacity = 1;
-        topHeader.style.pointerEvents = 'auto';
+      if (topHeader) {
+        if (window.scrollY > topHeader.clientHeight) {
+          topHeader.style.height = 0;
+          topHeader.style.opacity = 0;
+          topHeader.style.pointerEvents = 'none';
+        } else {
+          topHeader.style.height = 'auto';
+          topHeader.style.opacity = 1;
+          topHeader.style.pointerEvents = 'auto';
+        }
       }
     });
   }, []);

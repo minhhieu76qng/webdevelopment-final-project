@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Contract = () => {
-  return <div>contract</div>;
+  return <div />;
 };
 
 export default Contract;

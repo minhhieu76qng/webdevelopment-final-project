@@ -1,37 +1,46 @@
 import React, { useEffect } from 'react';
-import { Tabs, Tab } from 'react-bootstrap';
+import 'react-router-tabs/styles/react-router-tabs.css';
+import { NavTab } from 'react-router-tabs';
+import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import UpdateInfoContainer from '../../../containers/UpdateInfoContainer';
 import ROLE from '../../../constance/Role';
 import TeachingInfo from './TeachingInfo';
 import UpdateIntro from './UpdateIntro';
 
 const Profile = ({ account, fetchCities }) => {
+  const { url, path } = useRouteMatch();
   useEffect(() => {
     fetchCities();
   }, [fetchCities]);
   return (
     <div className='profile'>
-      <Tabs defaultActiveKey='profile' id='tab-profile'>
-        <Tab eventKey='profile' title='Profile'>
-          <div className='mt-4'>
-            <UpdateInfoContainer />
-          </div>
-        </Tab>
-        {account && account.role === ROLE.teacher && (
-          <Tab eventKey='teaching' title='Teaching'>
-            <div className='mt-4'>
-              <TeachingInfo />
-            </div>
-          </Tab>
-        )}
-        {account && account.role === ROLE.teacher && (
-          <Tab eventKey='introduce' title='Introduce'>
-            <div className='mt-4'>
-              <UpdateIntro />
-            </div>
-          </Tab>
-        )}
-      </Tabs>
+      <NavTab className='nav-tab  router-tabs' to={`${url}/basic`}>
+        Basic information
+      </NavTab>
+
+      {account && account.role === ROLE.teacher && (
+        <NavTab className='nav-tab  router-tabs' to={`${url}/teaching`}>
+          Teaching
+        </NavTab>
+      )}
+      {account && account.role === ROLE.teacher && (
+        <NavTab className='nav-tab  router-tabs' to={`${url}/introduce`}>
+          Introduce
+        </NavTab>
+      )}
+      <div className='mt-4'>
+        <Switch>
+          <Route exact path={`${path}/basic`} component={UpdateInfoContainer} />
+          {account && account.role === ROLE.teacher && (
+            <Route exact path={`${path}/teaching`} component={TeachingInfo} />
+          )}
+          {account && account.role === ROLE.teacher && (
+            <Route exact path={`${path}/introduce`} component={UpdateIntro} />
+          )}
+
+          <Redirect to={`${path}/basic`} />
+        </Switch>
+      </div>
     </div>
   );
 };

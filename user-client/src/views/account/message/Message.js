@@ -24,11 +24,13 @@ const Message = () => {
     const el = document.querySelector(
       '#messages-scroll .simplebar-content-wrapper',
     );
-    el.scrollTo({
-      top: el.scrollHeight,
-      left: 0,
-      behavior: 'smooth',
-    });
+    if (el) {
+      el.scrollTo({
+        top: el.scrollHeight,
+        left: 0,
+        behavior: 'smooth',
+      });
+    }
   };
 
   useEffect(() => {

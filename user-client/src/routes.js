@@ -65,12 +65,6 @@ const routes = {
       icon: <FontAwesomeIcon icon={faIdBadge} />,
     },
     {
-      path: '/messages/:toUserId',
-      name: 'Message',
-      component: Message,
-      layout: '/account',
-    },
-    {
       sidebar: true,
       path: '/messages',
       name: 'Message',
@@ -89,7 +83,7 @@ const routes = {
     {
       path: '/',
       name: 'Home',
-      redirectPath: '/account/profile',
+      redirectPath: '/account/profile/basic',
       layout: '/account',
     },
   ],
