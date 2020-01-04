@@ -7,7 +7,7 @@ const ContractSchema = new Schema(
       type: mongoose.Types.ObjectId,
       requried: true
     },
-    teachertAId: {
+    teacherAId: {
       type: mongoose.Types.ObjectId,
       requried: true
     },

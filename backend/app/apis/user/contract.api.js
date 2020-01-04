@@ -24,15 +24,80 @@ router.post(
   }
 );
 
+// get all
 router.get(
   "/",
   authenticateUser(),
   authorize([ROLES.student, ROLES.teacher]),
   async (req, res, next) => {
+    let { limit, page } = req.body;
     try {
+      const { contracts, total } = await contractService.getAllContracts(
+        req.user._id,
+        limit,
+        page
+      );
+      return res.status(httpCode.OK).json({
+        contracts,
+        total
+      });
     } catch (err) {
       return next(err);
     }
+  }
+);
+
+router.get(
+  "/active",
+  authenticateUser(),
+  authorize([ROLES.student, ROLES.teacher]),
+  async (req, res, next) => {
+    let { limit, page } = req.body;
+    try {
+      const { contracts, total } = await contractService.getAcceptedContracts(
+        req.user._id,
+        limit,
+        page
+      );
+      return res.status(httpCode.OK).json({
+        contracts,
+        total
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.get(
+  "/pending",
+  authenticateUser(),
+  authorize([ROLES.student, ROLES.teacher]),
+  async (req, res, next) => {
+    let { limit, page } = req.body;
+    try {
+      const { contracts, total } = await contractService.getPendingContracts(
+        req.user._id,
+        limit,
+        page
+      );
+      return res.status(httpCode.OK).json({
+        contracts,
+        total
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+// reject contract
+router.put(
+  "/:id",
+  authenticateUser(),
+  authorize(ROLES.teacher),
+  (req, res, next) => {
+    const { contractId } = req.params;
   }
 );
 

@@ -7,6 +7,31 @@ const teacherService = require("./teacher.service");
 const chatService = require("./chat.service");
 const contractRepo = require("../repositories/contract.repo");
 
+const paginateValidation = (accountId, limit, page) => {
+  if (!ObjectId.isValid(accountId)) {
+    throw new ErrorHandler(httpCode.BAD_REQUEST, "Require a valid Id");
+  }
+
+  limit = _.toInteger(limit);
+  page = _.toInteger(page);
+
+  if (!(_.isInteger(limit) && _.isInteger(page))) {
+    throw new ErrorHandler(
+      httpCode.BAD_REQUEST,
+      "Limit and page must be a number."
+    );
+  }
+  if (limit <= 1) {
+    limit = 10;
+  }
+
+  if (page <= 0) {
+    page = 1;
+  }
+
+  return { limit, page };
+};
+
 module.exports = {
   // id student, id teacher, starting date, hours, price/h, messageDescription
   sendRequest: async function({
@@ -101,5 +126,75 @@ module.exports = {
       contractId: contractResult._id,
       message: chatResult.message
     };
-  }
+  },
+
+  getAllContracts: async function(accountId, limit, page) {
+    const pagination = paginateValidation(accountId, limit, page);
+
+    const counter = await contractRepo.count(accountId);
+    let total = 0;
+    if (counter.length > 0) {
+      total = [{ total }];
+    }
+
+    const contracts = await contractRepo.findByAccountId(
+      accountId,
+      pagination.limit,
+      pagination.page - 1
+    );
+
+    return {
+      contracts,
+      total,
+      limit,
+      page
+    };
+  },
+
+  getAcceptedContracts: async function(accountId, limit, page) {
+    const pagination = paginateValidation(accountId, limit, page);
+
+    const counter = await contractRepo.countActive(accountId);
+    let total = 0;
+    if (counter.length > 0) {
+      total = [{ total }];
+    }
+
+    const contracts = await contractRepo.getActiveContracts(
+      accountId,
+      pagination.limit,
+      pagination.page - 1
+    );
+    return {
+      contracts,
+      total,
+      limit,
+      page
+    };
+  },
+
+  getPendingContracts: async function(accountId, limit, page) {
+    const pagination = paginateValidation(accountId, limit, page);
+
+    const counter = await contractRepo.countPending(accountId);
+    let total = 0;
+    if (counter.length > 0) {
+      total = [{ total }];
+    }
+
+    const contracts = await contractRepo.getPendingContracts(
+      accountId,
+      pagination.limit,
+      pagination.page - 1
+    );
+
+    return {
+      contracts,
+      total,
+      limit,
+      page
+    };
+  },
+
+  rejectContract: async function(contractId) {}
 };
