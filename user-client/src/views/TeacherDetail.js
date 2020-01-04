@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Row, Col, Image, Badge, FormControl, Button } from 'react-bootstrap';
+import {
+  Row,
+  Col,
+  Image,
+  Badge,
+  FormControl,
+  Button,
+  Modal,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import _ from 'lodash';
@@ -10,11 +18,13 @@ import Skeleton from 'react-loading-skeleton';
 import Axios from 'axios';
 import avatarDefault from '../assets/imgs/avatar.jpg';
 import { toast } from '../components/widgets/toast';
+import FormCreateContract from '../components/contract/FormCreateContract';
 
 const TeacherDetail = () => {
   const { teacherId } = useParams();
   const [teacher, setTeacher] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     setIsFetching(true);
@@ -186,6 +196,7 @@ $
                 variant='success'
                 // size='sm'
                 block
+                onClick={() => setShow(true)}
               >
                 Hire this teacher
               </Button>
@@ -235,6 +246,15 @@ $
           </Row>
         </Fade>
       )}
+
+      <Modal show={show} onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Creating contract</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormCreateContract teacherId={teacherId} setShow={setShow} />
+        </Modal.Body>
+      </Modal>
 
       {!isFetching && !cloneTeacher && <div>Not found</div>}
     </>

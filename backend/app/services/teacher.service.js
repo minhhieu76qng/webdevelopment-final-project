@@ -195,22 +195,24 @@ module.exports = {
       temp = { ...result[0] };
     }
 
-    delete temp.tags_out;
-    delete temp.categories_out;
+    if (temp) {
+      delete temp.tags_out;
+      delete temp.categories_out;
 
-    delete temp.cities_out;
-    temp.tags = [...result[0].tags_out];
+      delete temp.cities_out;
+      temp.tags = [...result[0].tags_out];
 
-    if (temp.account.address) {
-      delete temp.account.address.city;
-      temp.account.address.city = result[0].cities_out[0];
-    }
+      if (temp.account.address) {
+        delete temp.account.address.city;
+        temp.account.address.city = result[0].cities_out[0];
+      }
 
-    delete temp.catId;
-    temp.categories = result[0].categories_out[0];
+      delete temp.catId;
+      temp.categories = result[0].categories_out[0];
 
-    if (temp.account.local) {
-      delete temp.account.local.password;
+      if (temp.account.local) {
+        delete temp.account.local.password;
+      }
     }
 
     return temp;

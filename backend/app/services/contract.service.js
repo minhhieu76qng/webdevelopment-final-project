@@ -45,8 +45,7 @@ module.exports = {
     if (!(ObjectId.isValid(teacherId) && _.isString(teacherId))) {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Teacher Id is not valid.");
     }
-
-    if (!ObjectId.isValid(studentAccountId) && _.isString(studentAccountId)) {
+    if (!(ObjectId.isValid(studentAccountId) && _.isString(studentAccountId))) {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Student Id is not valid.");
     }
 
@@ -66,6 +65,7 @@ module.exports = {
         "Starting date must be greater than current."
       );
     }
+    rentalHour = _.toNumber(rentalHour);
     if (!(_.isNumber(rentalHour) && rentalHour >= 1)) {
       throw new ErrorHandler(
         httpCode.BAD_REQUEST,

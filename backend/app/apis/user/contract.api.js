@@ -12,7 +12,10 @@ router.post(
   authorize([ROLES.student]),
   async (req, res, next) => {
     try {
-      const { contractId } = await contractService.sendRequest(req.body);
+      const { contractId } = await contractService.sendRequest({
+        ...req.body,
+        studentAccountId: _.toString(req.user._id)
+      });
 
       return res.status(httpCode.OK).json({
         created: true,
@@ -91,9 +94,9 @@ router.get(
   }
 );
 
-// reject contract
+// accept contract
 router.put(
-  "/:id",
+  "/:id/accept",
   authenticateUser(),
   authorize(ROLES.teacher),
   (req, res, next) => {
@@ -101,4 +104,7 @@ router.put(
   }
 );
 
+// reject contract -> teacher -> change status
+
+// cancel contract -> student -> delete
 module.exports = router;
