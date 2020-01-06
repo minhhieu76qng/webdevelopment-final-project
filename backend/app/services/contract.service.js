@@ -21,7 +21,7 @@ const paginateValidation = (accountId, limit, page) => {
       "Limit and page must be a number."
     );
   }
-  if (limit <= 1) {
+  if (limit < 1) {
     limit = 10;
   }
 
@@ -131,68 +131,70 @@ module.exports = {
   getAllContracts: async function(accountId, limit, page) {
     const pagination = paginateValidation(accountId, limit, page);
 
-    const counter = await contractRepo.count(accountId);
+    const [counter, contracts] = await Promise.all([
+      contractRepo.count(accountId),
+      contractRepo.findByAccountId(
+        accountId,
+        pagination.limit,
+        pagination.page - 1
+      )
+    ]);
+
     let total = 0;
     if (counter.length > 0) {
-      total = [{ total }];
+      total = counter[0].total;
     }
-
-    const contracts = await contractRepo.findByAccountId(
-      accountId,
-      pagination.limit,
-      pagination.page - 1
-    );
 
     return {
       contracts,
       total,
-      limit,
-      page
+      ...pagination
     };
   },
 
   getAcceptedContracts: async function(accountId, limit, page) {
     const pagination = paginateValidation(accountId, limit, page);
 
-    const counter = await contractRepo.countActive(accountId);
+    const [counter, contracts] = await Promise.all([
+      contractRepo.countActive(accountId),
+      contractRepo.getActiveContracts(
+        accountId,
+        pagination.limit,
+        pagination.page - 1
+      )
+    ]);
+
     let total = 0;
     if (counter.length > 0) {
-      total = [{ total }];
+      total = counter[0].total;
     }
-
-    const contracts = await contractRepo.getActiveContracts(
-      accountId,
-      pagination.limit,
-      pagination.page - 1
-    );
     return {
       contracts,
       total,
-      limit,
-      page
+      ...pagination
     };
   },
 
   getPendingContracts: async function(accountId, limit, page) {
     const pagination = paginateValidation(accountId, limit, page);
 
-    const counter = await contractRepo.countPending(accountId);
+    const [counter, contracts] = await Promise.all([
+      contractRepo.countPending(accountId),
+      contractRepo.getPendingContracts(
+        accountId,
+        pagination.limit,
+        pagination.page - 1
+      )
+    ]);
+
     let total = 0;
     if (counter.length > 0) {
-      total = [{ total }];
+      total = counter[0].total;
     }
-
-    const contracts = await contractRepo.getPendingContracts(
-      accountId,
-      pagination.limit,
-      pagination.page - 1
-    );
-
     return {
       contracts,
       total,
-      limit,
-      page
+      ...pagination
     };
   },
 

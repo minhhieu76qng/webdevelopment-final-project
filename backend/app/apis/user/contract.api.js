@@ -33,16 +33,15 @@ router.get(
   authenticateUser(),
   authorize([ROLES.student, ROLES.teacher]),
   async (req, res, next) => {
-    let { limit, page } = req.body;
+    let { limit, page } = req.query;
     try {
-      const { contracts, total } = await contractService.getAllContracts(
+      const result = await contractService.getAllContracts(
         req.user._id,
         limit,
         page
       );
       return res.status(httpCode.OK).json({
-        contracts,
-        total
+        ...result
       });
     } catch (err) {
       return next(err);
@@ -55,16 +54,15 @@ router.get(
   authenticateUser(),
   authorize([ROLES.student, ROLES.teacher]),
   async (req, res, next) => {
-    let { limit, page } = req.body;
+    let { limit, page } = req.query;
     try {
-      const { contracts, total } = await contractService.getAcceptedContracts(
+      const result = await contractService.getAcceptedContracts(
         req.user._id,
         limit,
         page
       );
       return res.status(httpCode.OK).json({
-        contracts,
-        total
+        ...result
       });
     } catch (err) {
       return next(err);
@@ -77,16 +75,15 @@ router.get(
   authenticateUser(),
   authorize([ROLES.student, ROLES.teacher]),
   async (req, res, next) => {
-    let { limit, page } = req.body;
+    let { limit, page } = req.query;
     try {
-      const { contracts, total } = await contractService.getPendingContracts(
+      const result = await contractService.getPendingContracts(
         req.user._id,
         limit,
         page
       );
       return res.status(httpCode.OK).json({
-        contracts,
-        total
+        ...result
       });
     } catch (err) {
       return next(err);

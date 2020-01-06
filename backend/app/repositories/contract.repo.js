@@ -26,6 +26,11 @@ module.exports = {
         $match: filter
       },
       {
+        $sort: {
+          startingDate: -1
+        }
+      },
+      {
         $skip: offset * limit
       },
       {

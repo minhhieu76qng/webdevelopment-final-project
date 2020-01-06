@@ -6,13 +6,18 @@ import { toast } from '../../../components/widgets/toast';
 const ActiveContracts = () => {
   const [isFetching, setFetching] = useState(false);
   const [contracts, setContracts] = useState(null);
-  const [total, setTotal] = useState(null);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+  });
+
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     setFetching(true);
-    Axios.get('/api/user/contracts/active', { limit, page })
+    const { limit, page } = pagination;
+    Axios.get(`/api/user/contracts/active?limit=${limit}&page=${page}`)
       .then(
         ({
           data: {
@@ -22,10 +27,18 @@ const ActiveContracts = () => {
             page: currentPage,
           },
         }) => {
-          setContracts(list);
+          if (
+            pageLimit !== pagination.limit &&
+            currentPage !== pagination.page
+          ) {
+            setPagination({
+              ...pagination,
+              page: currentPage,
+              limit: pageLimit,
+            });
+          }
           setTotal(totalItem);
-          setPage(currentPage);
-          setLimit(pageLimit);
+          setContracts(list);
         },
       )
       .catch(err => {
@@ -36,7 +49,7 @@ const ActiveContracts = () => {
       .finally(() => {
         setFetching(false);
       });
-  }, [limit, page]);
+  }, [pagination]);
 
   const onRowClick = () => {};
   return (
@@ -44,10 +57,10 @@ const ActiveContracts = () => {
       <ContractList
         list={contracts}
         isFetching={isFetching}
-        page={page}
-        total={Math.ceil(total / limit)}
+        pagination={pagination}
+        total={total}
         onRowClick={onRowClick}
-        onPageClick={setPage}
+        setPagination={setPagination}
       />
     </div>
   );

@@ -7,11 +7,11 @@ import ContractStatus from '../../constance/ContractStatus';
 
 const ContractList = ({
   list,
-  page,
-  total,
+  pagination,
   isFetching,
   onRowClick,
-  onPageClick,
+  setPagination,
+  total,
 }) => {
   const getStatus = stt => {
     switch (stt) {
@@ -30,12 +30,12 @@ const ContractList = ({
 
   const getPagination = () => {
     const items = [];
-    for (let i = 1; i <= total; i += 1) {
+    for (let i = 1; i <= Math.ceil(total / pagination.limit); i += 1) {
       items.push(
         <Pagination.Item
           key={i}
-          active={i === page}
-          onClick={() => onPageClick(i)}
+          active={i === pagination.page}
+          onClick={() => setPagination({ ...pagination, page: i })}
         >
           {i}
         </Pagination.Item>,
