@@ -2,7 +2,8 @@ import React from 'react';
 import { NavTab } from 'react-router-tabs/cjs/react-router-tabs.min';
 import { useRouteMatch, Route, Switch, Redirect } from 'react-router-dom';
 import ActiveContracts from './ActiveContracts';
-import PendingContracts from './PendingContracts';
+import '../../../assets/scss/Contract.scss';
+import PenddingContainer from '../../../containers/PendingContractContainer';
 
 const Contract = () => {
   const { url, path } = useRouteMatch();
@@ -18,7 +19,7 @@ const Contract = () => {
       <div className='mt-4'>
         <Switch>
           <Route exact path={`${path}/active`} component={ActiveContracts} />
-          <Route exact path={`${path}/pending`} component={PendingContracts} />
+          <Route exact path={`${path}/pending`} component={PenddingContainer} />
           <Redirect to={`${path}/active`} />
         </Switch>
       </div>

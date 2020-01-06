@@ -93,11 +93,27 @@ router.get(
 
 // accept contract
 router.put(
-  "/:id/accept",
+  "/accept",
   authenticateUser(),
   authorize(ROLES.teacher),
-  (req, res, next) => {
-    const { contractId } = req.params;
+  async (req, res, next) => {
+    const { acceptedDate, contractList } = req.body;
+
+    try {
+      const {
+        isUpdated,
+        nModified,
+        contracts
+      } = await contractService.acceptContracts(
+        contractList,
+        req.user._id,
+        acceptedDate
+      );
+
+      return res.status(httpCode.OK).json({ isUpdated, nModified });
+    } catch (err) {
+      return next(err);
+    }
   }
 );
 

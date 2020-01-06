@@ -316,5 +316,9 @@ module.exports = {
       _session.endSession();
       throw err;
     }
+  },
+
+  getTeacherByAccountId: async function(accountId) {
+    return await teacherRepo.findTeacherByAccountId(accountId);
   }
 };

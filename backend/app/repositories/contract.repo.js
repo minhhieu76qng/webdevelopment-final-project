@@ -3,18 +3,6 @@ const { Contract } = require("../models/contract.model");
 const { CONTRACT_STATUS } = require("../constance/constance");
 
 module.exports = {
-  sendRequest: async function(payload, session = null) {
-    const temp = { ...payload };
-
-    temp.status = CONTRACT_STATUS.pending;
-    temp.historyStatus = [
-      { stt: CONTRACT_STATUS.pending, date: temp.startingDate }
-    ];
-    const ct = new Contract(temp);
-
-    return await ct.save({ session });
-  },
-
   findByAccountId: async function(accountId, limit, offset, filter = {}) {
     let contracts = await Contract.aggregate([
       {
@@ -85,6 +73,39 @@ module.exports = {
     };
     return await this.findByAccountId(accountId, limit, offset, filter);
   },
+
+  getContractById: async function(contractId) {
+    return await Contract.findById(contractId);
+  },
+
+  // -------------- SET ---------------------
+
+  sendRequest: async function(payload, session = null) {
+    const temp = { ...payload };
+
+    temp.status = CONTRACT_STATUS.pending;
+    temp.historyStatus = [
+      { stt: CONTRACT_STATUS.pending, date: temp.startingDate }
+    ];
+    const ct = new Contract(temp);
+
+    return await ct.save({ session });
+  },
+
+  updateContractsStatus: async function(
+    contracts,
+    contractStatus,
+    acceptedDate = new Date()
+  ) {
+    console.log(contracts);
+    const statusObj = { stt: contractStatus, date: acceptedDate };
+    return await Contract.updateMany(
+      { _id: { $in: contracts } },
+      { status: contractStatus, $push: { historyStatus: statusObj } }
+    );
+  },
+
+  // -------------- COUNT --------------------
   count: async function(accountId, filter = {}) {
     return await Contract.aggregate([
       {

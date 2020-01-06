@@ -1,11 +1,12 @@
-const mongoose = require("mongoose");
 const _ = require("lodash");
+const moment = require("moment");
 const ObjectId = require("mongoose").Types.ObjectId;
 const httpCode = require("http-status-codes");
 const { ErrorHandler } = require("../helpers/error.helper");
 const teacherService = require("./teacher.service");
 const chatService = require("./chat.service");
 const contractRepo = require("../repositories/contract.repo");
+const { CONTRACT_STATUS } = require("../constance/constance");
 
 const paginateValidation = (accountId, limit, page) => {
   if (!ObjectId.isValid(accountId)) {
@@ -195,6 +196,85 @@ module.exports = {
       contracts,
       total,
       ...pagination
+    };
+  },
+
+  acceptContracts: async function(contractList, accountId, acceptDate) {
+    // kiểm tra dữ liệu
+    if (!(_.isArray(contractList) && contractList.length > 0)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "The contract list must be an array with at least one item."
+      );
+    }
+
+    if (!ObjectId.isValid(accountId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Teacher ID is not valid.");
+    }
+
+    const acDate = new Date(acceptDate);
+    if (!moment(acDate).isValid()) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Accepted date is not valid."
+      );
+    }
+
+    // lấy duy nhất item
+    let tmp = Array.from(new Set(contractList));
+
+    let contracts = await Promise.all(
+      tmp.map(ct => contractRepo.getContractById(ct))
+    );
+
+    contracts = contracts.filter(val => val !== null);
+
+    if (contracts.length === 0) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "All contracts are not exist."
+      );
+    }
+
+    const teacher = await teacherService.getTeacherByAccountId(accountId);
+    if (!teacher) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Teacher is not exist.");
+    }
+
+    contracts = contracts.filter(val => {
+      if (
+        !(
+          val.status === CONTRACT_STATUS.pending &&
+          _.toString(val.teacherAId) === _.toString(accountId) &&
+          new Date(val.startingDate) >= acDate
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+    if (contracts.length === 0) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "All contracts are not valid."
+      );
+    }
+
+    contracts = contracts.map(val => val._id);
+
+    // // set lại trạng thái của hợp đồng sang teaching
+    const result = await contractRepo.updateContractsStatus(
+      contracts,
+      CONTRACT_STATUS.teaching,
+      acDate
+    );
+
+    return {
+      isUpdated: result.nModified >= 1,
+      nModified: result.nModified,
+      contracts
     };
   },
 

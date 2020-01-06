@@ -1,5 +1,5 @@
-import React from 'react';
-import { Table, Badge, Spinner, Pagination } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { Table, Badge, Spinner, Pagination, Form } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
 import { Fade } from 'react-reveal';
@@ -12,7 +12,16 @@ const ContractList = ({
   onRowClick,
   setPagination,
   total,
+  selectMode = false,
+  selectedItems,
+  setSelectedItems,
 }) => {
+  useEffect(() => {
+    if (!_.isEmpty(selectedItems)) {
+      setSelectedItems([]);
+    }
+  }, [selectMode]);
+
   const getStatus = stt => {
     switch (stt) {
       case ContractStatus.pending:
@@ -44,17 +53,77 @@ const ContractList = ({
     return items;
   };
 
+  const toggleAll = event => {
+    event.persist();
+    const { checked } = event.target;
+    if (_.isArray(list)) {
+      if (checked) {
+        const tmp = list.map(val => _.toString(val._id));
+        setSelectedItems(tmp);
+      } else {
+        setSelectedItems([]);
+      }
+    }
+  };
+
+  const onSingleTogle = (event, contractId) => {
+    event.persist();
+    if (selectedItems.indexOf(contractId) === -1) {
+      setSelectedItems(s => [...s, contractId]);
+    } else {
+      setSelectedItems(s => s.filter(val => val !== contractId));
+    }
+  };
+
   return (
     <div>
       <Table striped bordered>
         <thead>
           <tr>
-            <td style={{ width: '5%' }}>#</td>
-            <td style={{ width: '30%' }}>Name of Contract</td>
-            <td style={{ width: '20%' }}>Student</td>
-            <td style={{ width: '20%' }}>Teacher</td>
-            <td style={{ width: '15%' }}>Begin date</td>
-            <td style={{ width: '10%' }}>Status</td>
+            {!selectMode && (
+              <td
+                className='font-weight-bold text-center'
+                style={{ width: '5%' }}
+              >
+                #
+              </td>
+            )}
+            {selectMode && (
+              <td
+                className='font-weight-bold text-center'
+                style={{ width: '5%' }}
+              >
+                <Form.Check
+                  custom
+                  type='checkbox'
+                  label=''
+                  id='cb-all-contracts'
+                  onChange={event => toggleAll(event)}
+                  checked={
+                    list &&
+                    _.isArray(list) &&
+                    _.isArray(selectedItems) &&
+                    selectedItems.length > 0 &&
+                    selectedItems.length === list.length
+                  }
+                />
+              </td>
+            )}
+            <td className='font-weight-bold' style={{ width: '30%' }}>
+              Contract name
+            </td>
+            <td className='font-weight-bold' style={{ width: '20%' }}>
+              Student
+            </td>
+            <td className='font-weight-bold' style={{ width: '20%' }}>
+              Teacher
+            </td>
+            <td className='font-weight-bold' style={{ width: '15%' }}>
+              Begin date
+            </td>
+            <td className='font-weight-bold' style={{ width: '10%' }}>
+              Status
+            </td>
           </tr>
         </thead>
         <tbody>
@@ -68,7 +137,27 @@ const ContractList = ({
               return (
                 <Fade key={ct._id}>
                   <tr onClick={() => onRowClick(ct._id)}>
-                    <td>{index + 1}</td>
+                    {!selectMode && (
+                      <td className='text-center'>{index + 1}</td>
+                    )}
+                    {selectMode && (
+                      <td className='text-center'>
+                        <Form.Check
+                          custom
+                          type='checkbox'
+                          id={`cb-contract-${ct._id}`}
+                          label=''
+                          checked={
+                            selectedItems &&
+                            _.isArray(selectedItems) &&
+                            selectedItems.indexOf(`${ct._id}`) !== -1
+                          }
+                          onChange={event =>
+                            onSingleTogle(event, _.toString(ct._id))}
+                        />
+                      </td>
+                    )}
+
                     <td>{ct.contractName}</td>
                     <td>{`${sName.firstName} ${sName.lastName}`}</td>
                     <td>{`${tName.firstName} ${tName.lastName}`}</td>
