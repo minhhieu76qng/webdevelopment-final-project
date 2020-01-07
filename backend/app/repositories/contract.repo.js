@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const { ObjectId } = require("mongoose").Types;
 const { Contract } = require("../models/contract.model");
 const { CONTRACT_STATUS } = require("../constance/constance");
 
@@ -74,8 +75,14 @@ module.exports = {
     return await this.findByAccountId(accountId, limit, offset, filter);
   },
 
-  getContractById: async function(contractId) {
-    return await Contract.findById(contractId);
+  getContractDetail: async function(contractId, accountId) {
+    const contracts = await this.findByAccountId(accountId, 1, 0, {
+      _id: ObjectId(contractId)
+    });
+    if (!(_.isArray(contracts) && contracts.length > 0)) {
+      return null;
+    }
+    return contracts[0];
   },
 
   // -------------- SET ---------------------
@@ -97,12 +104,40 @@ module.exports = {
     contractStatus,
     acceptedDate = new Date()
   ) {
-    console.log(contracts);
     const statusObj = { stt: contractStatus, date: acceptedDate };
     return await Contract.updateMany(
       { _id: { $in: contracts } },
       { status: contractStatus, $push: { historyStatus: statusObj } }
     );
+  },
+
+  acceptContracts: async function(contracts, acDate) {
+    const statusObj = {
+      stt: CONTRACT_STATUS.teaching,
+      date: acDate
+    };
+    const result = await Promise.all(
+      contracts.map(val =>
+        Contract.updateOne(
+          {
+            _id: val.contractId
+          },
+          {
+            contractName: val.name,
+            status: CONTRACT_STATUS.teaching,
+            $push: { historyStatus: statusObj }
+          }
+        )
+      )
+    );
+
+    let totalModified = 0;
+    result.map(v => {
+      if (v && v.nModified >= 0) {
+        totalModified += v.nModified;
+      }
+    });
+    return totalModified;
   },
 
   // -------------- COUNT --------------------

@@ -81,6 +81,13 @@ const FormCreateContract = ({ teacherId, setShow }) => {
               <Form.Label>When you want to start:</Form.Label>
               <DatePicker
                 value={values.startingDate}
+                dayPickerProps={{
+                  modifiers: {
+                    disabled: {
+                      before: new Date(),
+                    },
+                  },
+                }}
                 onDayChange={val => {
                   setFieldValue('startingDate', val);
                 }}

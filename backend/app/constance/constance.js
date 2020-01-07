@@ -12,5 +12,6 @@ module.exports = {
     teaching: "TEACHING",
     paid: "PAID",
     complain: "COMPLAIN"
-  }
+  },
+  MAX_LENGTH_CONTRACT_NAME: 35
 };

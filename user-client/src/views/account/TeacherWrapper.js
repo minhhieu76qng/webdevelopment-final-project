@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Switch } from 'react-router-dom';
 
 const TeacherWrapper = ({ account, children }) => {
   if (account && account.teacher && !account.teacher.firstUpdated) {
     return <Redirect to='/account/welcome' />;
   }
-  return <>{children}</>;
+  return <Switch>{children}</Switch>;
 };
 const mapStateToProps = state => {
   return {

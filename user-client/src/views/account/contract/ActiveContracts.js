@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
+import { useHistory } from 'react-router-dom';
 import ContractList from '../../../components/contract/ContractList';
 import { toast } from '../../../components/widgets/toast';
 
 const ActiveContracts = () => {
+  const history = useHistory();
   const [isFetching, setFetching] = useState(false);
   const [contracts, setContracts] = useState(null);
 
@@ -51,9 +53,11 @@ const ActiveContracts = () => {
       });
   }, [pagination]);
 
-  const onRowClick = () => {};
+  const onRowClick = contractId => {
+    history.push(`/account/contracts/detail/${contractId}`);
+  };
   return (
-    <div>
+    <div className='active-contracts'>
       <ContractList
         list={contracts}
         isFetching={isFetching}

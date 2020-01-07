@@ -50,6 +50,28 @@ router.get(
 );
 
 router.get(
+  "/detail/:contractId",
+  authenticateUser(),
+  authorize([ROLES.teacher, ROLES.student]),
+  async (req, res, next) => {
+    const { contractId } = req.params;
+    try {
+      const { contract } = await contractService.getContractById(
+        contractId,
+        req.user._id
+      );
+
+      return res.status(httpCode.OK).json({
+        contract,
+        contractId
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.get(
   "/active",
   authenticateUser(),
   authorize([ROLES.student, ROLES.teacher]),

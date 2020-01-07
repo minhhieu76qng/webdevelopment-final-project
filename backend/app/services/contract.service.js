@@ -6,7 +6,10 @@ const { ErrorHandler } = require("../helpers/error.helper");
 const teacherService = require("./teacher.service");
 const chatService = require("./chat.service");
 const contractRepo = require("../repositories/contract.repo");
-const { CONTRACT_STATUS } = require("../constance/constance");
+const {
+  CONTRACT_STATUS,
+  MAX_LENGTH_CONTRACT_NAME
+} = require("../constance/constance");
 
 const paginateValidation = (accountId, limit, page) => {
   if (!ObjectId.isValid(accountId)) {
@@ -129,6 +132,39 @@ module.exports = {
     };
   },
 
+  getContractById: async function(contractId, accountId) {
+    if (!ObjectId.isValid(contractId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Contract ID is not valid.");
+    }
+    if (!ObjectId.isValid(accountId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account ID is not valid.");
+    }
+
+    // get contract -> kiểm tra xem user này có tồn tại trong contract hay không
+    const contract = await contractRepo.getContractDetail(
+      contractId,
+      accountId
+    );
+
+    if (!contract) {
+      return { contract: null };
+    }
+
+    let isExist = false;
+
+    if (_.toString(contract.teacherAId) === _.toString(accountId) && !isExist) {
+      isExist = true;
+    }
+
+    if (_.toString(contract.studentAId) === _.toString(accountId) && !isExist) {
+      isExist = true;
+    }
+
+    return {
+      contract: isExist ? contract : null
+    };
+  },
+
   getAllContracts: async function(accountId, limit, page) {
     const pagination = paginateValidation(accountId, limit, page);
 
@@ -221,12 +257,39 @@ module.exports = {
     }
 
     // lấy duy nhất item
-    let tmp = Array.from(new Set(contractList));
+    // lọc ra các item: là valid Contract ID, và name <= 35
+    let tmp = [];
+    for (let i = 0; i < contractList.length; i++) {
+      let { contractId, name } = contractList[i];
+      if (
+        contractId &&
+        ObjectId.isValid(contractId) &&
+        _.isString(name) &&
+        name.length <= MAX_LENGTH_CONTRACT_NAME
+      ) {
+        const exist = tmp.find(val => val.contractId === contractId);
+        if (!exist) {
+          tmp.push({ ...contractList[i] });
+        }
+      }
+    }
 
+    if (tmp.length === 0) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "All contracts are not valid."
+      );
+    }
+
+    // lấy danh sách các contract được tải lên của accountId
     let contracts = await Promise.all(
-      tmp.map(ct => contractRepo.getContractById(ct))
+      tmp.map(ct => this.getContractById(ct.contractId, accountId))
     );
 
+    // destruct
+    contracts = contracts.map(val => val.contract);
+
+    // filter những giá trị sai
     contracts = contracts.filter(val => val !== null);
 
     if (contracts.length === 0) {
@@ -236,16 +299,10 @@ module.exports = {
       );
     }
 
-    const teacher = await teacherService.getTeacherByAccountId(accountId);
-    if (!teacher) {
-      throw new ErrorHandler(httpCode.BAD_REQUEST, "Teacher is not exist.");
-    }
-
     contracts = contracts.filter(val => {
       if (
         !(
           val.status === CONTRACT_STATUS.pending &&
-          _.toString(val.teacherAId) === _.toString(accountId) &&
           new Date(val.startingDate) >= acDate
         )
       ) {
@@ -264,17 +321,26 @@ module.exports = {
 
     contracts = contracts.map(val => val._id);
 
-    // // set lại trạng thái của hợp đồng sang teaching
-    const result = await contractRepo.updateContractsStatus(
-      contracts,
-      CONTRACT_STATUS.teaching,
+    let contractsWithName = [];
+    contracts.map(ct => {
+      const exist = tmp.find(
+        val => _.toString(val.contractId) === _.toString(ct)
+      );
+      if (exist) {
+        contractsWithName.push({ ...exist });
+      }
+    });
+
+    // set lại trạng thái của hợp đồng sang teaching
+    const totalModified = await contractRepo.acceptContracts(
+      contractsWithName,
       acDate
     );
 
     return {
-      isUpdated: result.nModified >= 1,
-      nModified: result.nModified,
-      contracts
+      isUpdated: totalModified > 0,
+      nModified: totalModified,
+      contracts: contractsWithName
     };
   },
 

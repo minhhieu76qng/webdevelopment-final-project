@@ -7,6 +7,7 @@ import { Button } from 'react-bootstrap';
 import ContractList from '../../../components/contract/ContractList';
 import { toast } from '../../../components/widgets/toast';
 import ROLE from '../../../constance/Role';
+import CtrNameModal from '../../../components/contract/ModalSetContractName';
 
 const PendingContracts = ({ account }) => {
   const [isFetching, setFetching] = useState(false);
@@ -20,6 +21,8 @@ const PendingContracts = ({ account }) => {
   const [total, setTotal] = useState(0);
   const [selectMode, setSelectMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+
+  const [showNamePanel, setShowNamePanel] = useState(false);
 
   const fetchPending = useCallback(() => {
     setFetching(true);
@@ -72,8 +75,14 @@ const PendingContracts = ({ account }) => {
       );
       return;
     }
+
+    // hiển thị panel nhập các tên
+    setShowNamePanel(true);
+  };
+
+  const sendContractsToServer = list => {
     Axios.put('/api/user/contracts/accept', {
-      contractList: selectedItems,
+      contractList: list,
       acceptedDate: new Date(),
     })
       .then(({ data: { isUpdated } }) => {
@@ -89,6 +98,13 @@ const PendingContracts = ({ account }) => {
       });
   };
 
+  const setNames = values => {
+    const keys = Object.keys(values);
+    const tmp = keys.map(k => ({ contractId: k, name: values[k] }));
+    sendContractsToServer(tmp);
+    setShowNamePanel(false);
+  };
+
   return (
     <>
       <div className='btn-blocks'>
@@ -97,25 +113,31 @@ const PendingContracts = ({ account }) => {
         </Button>
         {selectMode && (
           <>
-            {account && account.role === ROLE.teacher && (
-              <>
-                <Button size='sm' variant='success' onClick={onAcceptClick}>
-                  <FontAwesomeIcon className='mr-2' icon={faCheck} />
-                  Accept
-                </Button>
-                <Button size='sm' variant='danger'>
-                  <FontAwesomeIcon className='mr-2' icon={faBan} />
-                  Reject
-                </Button>
-              </>
-            )}
+            {account &&
+              account.role === ROLE.teacher &&
+              _.isArray(selectedItems) &&
+              selectedItems.length > 0 && (
+                <>
+                  <Button size='sm' variant='success' onClick={onAcceptClick}>
+                    <FontAwesomeIcon className='mr-2' icon={faCheck} />
+                    Accept
+                  </Button>
+                  <Button size='sm' variant='danger'>
+                    <FontAwesomeIcon className='mr-2' icon={faBan} />
+                    Reject
+                  </Button>
+                </>
+              )}
 
-            {account && account.role === ROLE.student && (
-              <Button size='sm' variant='danger'>
-                <FontAwesomeIcon className='mr-2' icon={faTrash} />
-                Delete
-              </Button>
-            )}
+            {account &&
+              account.role === ROLE.student &&
+              _.isArray(selectedItems) &&
+              selectedItems.length > 0 && (
+                <Button size='sm' variant='danger'>
+                  <FontAwesomeIcon className='mr-2' icon={faTrash} />
+                  Delete
+                </Button>
+              )}
           </>
         )}
       </div>
@@ -132,6 +154,14 @@ const PendingContracts = ({ account }) => {
           setSelectedItems={setSelectedItems}
         />
       </div>
+
+      <CtrNameModal
+        account={account}
+        selectedItems={selectedItems}
+        show={showNamePanel}
+        setShow={setShowNamePanel}
+        onSubmit={setNames}
+      />
     </>
   );
 };

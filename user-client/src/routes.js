@@ -15,6 +15,7 @@ import TeacherList from './views/TeacherList';
 import Message from './views/account/message/Message';
 import Contract from './views/account/contract';
 import WelcomeContainer from './containers/WelcomeContainer';
+import ContractDetail from './views/account/contract/ContractDetail';
 
 const routes = {
   student: [
@@ -73,6 +74,13 @@ const routes = {
       icon: <FontAwesomeIcon icon={faEnvelope} />,
     },
     {
+      exact: true,
+      path: '/contracts/detail/:contractId',
+      name: 'Contracts',
+      component: ContractDetail,
+      layout: '/account',
+    },
+    {
       sidebar: true,
       path: '/contracts',
       name: 'Contracts',
@@ -113,6 +121,13 @@ const routes = {
       icon: <FontAwesomeIcon icon={faEnvelope} />,
     },
     {
+      exact: true,
+      path: '/contracts/detail/:contractId',
+      name: 'Contracts',
+      component: ContractDetail,
+      layout: '/account',
+    },
+    {
       sidebar: true,
       path: '/contracts',
       name: 'Contracts',
@@ -127,13 +142,13 @@ const routes = {
       component: WelcomeContainer,
       layout: '/account',
     },
-    // {
-    //   exact: true,
-    //   path: '/',
-    //   name: 'Home',
-    //   redirectPath: '/account/dashboard',
-    //   layout: '/account',
-    // },
+    {
+      exact: true,
+      path: '/',
+      name: 'Home',
+      redirectPath: '/account/dashboard',
+      layout: '/account',
+    },
   ],
 };
 
