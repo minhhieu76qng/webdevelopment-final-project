@@ -4,10 +4,10 @@ import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTrash, faBan } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'react-bootstrap';
-import ContractList from '../../../components/contract/ContractList';
 import { toast } from '../../../components/widgets/toast';
 import ROLE from '../../../constance/Role';
 import CtrNameModal from '../../../components/contract/ModalSetContractName';
+import ContractListContainer from '../../../containers/ContractListContainer';
 
 const PendingContracts = ({ account }) => {
   const [isFetching, setFetching] = useState(false);
@@ -85,9 +85,9 @@ const PendingContracts = ({ account }) => {
       contractList: list,
       acceptedDate: new Date(),
     })
-      .then(({ data: { isUpdated } }) => {
-        if (isUpdated) {
-          toast.success('Update successfully!');
+      .then(({ data: { isUpdated, nModified } }) => {
+        if (isUpdated && nModified >= 0) {
+          toast.success(`Update ${nModified}/${list.length} items.`);
           fetchPending();
         }
       })
@@ -142,7 +142,7 @@ const PendingContracts = ({ account }) => {
         )}
       </div>
       <div className='mt-4'>
-        <ContractList
+        <ContractListContainer
           list={contracts}
           isFetching={isFetching}
           pagination={pagination}

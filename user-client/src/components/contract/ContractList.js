@@ -3,9 +3,11 @@ import { Table, Badge, Spinner, Pagination, Form } from 'react-bootstrap';
 import _ from 'lodash';
 import moment from 'moment';
 import { Fade } from 'react-reveal';
-import ContractStatus from '../../constance/ContractStatus';
+import ROLES from '../../constance/Role';
+import { getStatus } from '../../helpers/helpers';
 
 const ContractList = ({
+  account,
   list,
   pagination,
   isFetching,
@@ -20,22 +22,7 @@ const ContractList = ({
     if (!_.isEmpty(selectedItems)) {
       setSelectedItems([]);
     }
-  }, [selectMode]);
-
-  const getStatus = stt => {
-    switch (stt) {
-      case ContractStatus.pending:
-        return 'warning';
-      case ContractStatus.teaching:
-        return 'info';
-      case ContractStatus.paid:
-        return 'success';
-      case ContractStatus.complain:
-        return 'danger';
-      default:
-        return null;
-    }
-  };
+  }, [selectMode, setSelectedItems, selectedItems]);
 
   const getPagination = () => {
     const items = [];
@@ -109,19 +96,24 @@ const ContractList = ({
                 />
               </td>
             )}
-            <td className='font-weight-bold' style={{ width: '30%' }}>
+            <td className='font-weight-bold' style={{ width: '35%' }}>
               Contract name
             </td>
+            {account && account.role === ROLES.teacher && (
+              <td className='font-weight-bold' style={{ width: '25%' }}>
+                Student
+              </td>
+            )}
+            {account && account.role === ROLES.student && (
+              <td className='font-weight-bold' style={{ width: '25%' }}>
+                Teacher
+              </td>
+            )}
+
             <td className='font-weight-bold' style={{ width: '20%' }}>
-              Student
-            </td>
-            <td className='font-weight-bold' style={{ width: '20%' }}>
-              Teacher
-            </td>
-            <td className='font-weight-bold' style={{ width: '15%' }}>
               Begin date
             </td>
-            <td className='font-weight-bold' style={{ width: '10%' }}>
+            <td className='font-weight-bold' style={{ width: '15%' }}>
               Status
             </td>
           </tr>
@@ -159,8 +151,14 @@ const ContractList = ({
                     )}
 
                     <td>{ct.contractName}</td>
-                    <td>{`${sName.firstName} ${sName.lastName}`}</td>
-                    <td>{`${tName.firstName} ${tName.lastName}`}</td>
+
+                    {account && account.role === ROLES.teacher && (
+                      <td>{`${sName.firstName} ${sName.lastName}`}</td>
+                    )}
+                    {account && account.role === ROLES.student && (
+                      <td>{`${tName.firstName} ${tName.lastName}`}</td>
+                    )}
+
                     <td>{moment(ct.startingDate).format('L')}</td>
 
                     {status && (

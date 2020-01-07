@@ -91,9 +91,7 @@ module.exports = {
     const temp = { ...payload };
 
     temp.status = CONTRACT_STATUS.pending;
-    temp.historyStatus = [
-      { stt: CONTRACT_STATUS.pending, date: temp.startingDate }
-    ];
+    temp.historyStatus = [{ stt: CONTRACT_STATUS.pending, date: new Date() }];
     const ct = new Contract(temp);
 
     return await ct.save({ session });

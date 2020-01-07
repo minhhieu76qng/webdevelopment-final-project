@@ -49,6 +49,7 @@ router.get(
   }
 );
 
+// xem chi tiết
 router.get(
   "/detail/:contractId",
   authenticateUser(),
@@ -71,6 +72,7 @@ router.get(
   }
 );
 
+// danh sách các contracts đã được accept
 router.get(
   "/active",
   authenticateUser(),
@@ -92,6 +94,7 @@ router.get(
   }
 );
 
+// danh sách các contracts đang pendding
 router.get(
   "/pending",
   authenticateUser(),
@@ -113,7 +116,7 @@ router.get(
   }
 );
 
-// accept contract
+// giáo viên chấp nhận contract.
 router.put(
   "/accept",
   authenticateUser(),

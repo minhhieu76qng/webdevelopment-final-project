@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import ContractList from '../../../components/contract/ContractList';
 import { toast } from '../../../components/widgets/toast';
+import ContractListContainer from '../../../containers/ContractListContainer';
 
 const ActiveContracts = () => {
   const history = useHistory();
@@ -58,7 +58,7 @@ const ActiveContracts = () => {
   };
   return (
     <div className='active-contracts'>
-      <ContractList
+      <ContractListContainer
         list={contracts}
         isFetching={isFetching}
         pagination={pagination}

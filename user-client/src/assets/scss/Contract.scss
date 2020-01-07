@@ -16,3 +16,27 @@
     }
   }
 }
+
+.contract-detail {
+  table.table-detail {
+    font-size: 15px;
+    width: 100%;
+    max-width: 400px;
+    tr {
+      vertical-align: top;
+      td {
+        padding: 5px 0;
+        &.title {
+          width: 35%;
+        }
+        &.content {
+          width: 65%;
+        }
+      }
+    }
+
+    .table-status {
+      width: 100%;
+    }
+  }
+}
