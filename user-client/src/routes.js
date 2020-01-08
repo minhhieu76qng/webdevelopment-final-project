@@ -16,6 +16,7 @@ import Message from './views/account/message/Message';
 import Contract from './views/account/contract';
 import WelcomeContainer from './containers/WelcomeContainer';
 import ContractDetailContainer from './containers/ContractDetailContainer';
+import EmailVerification from './views/EmailVerification';
 
 const routes = {
   student: [
@@ -41,6 +42,12 @@ const routes = {
       path: '/teachers/:teacherId',
       name: 'Detail',
       component: TeacherDetail,
+      layout: '',
+    },
+    {
+      path: '/confirm/:token',
+      name: 'Mail confirm',
+      component: EmailVerification,
       layout: '',
     },
     {

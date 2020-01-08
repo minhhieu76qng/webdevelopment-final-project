@@ -117,5 +117,13 @@ module.exports = {
       { "address.city": cityId },
       { session }
     );
+  },
+
+  setBlock: async function(accountId, isBlock) {
+    return await Account.updateOne({ _id: accountId }, { isBlock });
+  },
+
+  setVerification: async function(accountId) {
+    return await Account.updateOne({ _id: accountId }, { isVerified: true });
   }
 };

@@ -226,5 +226,25 @@ module.exports = {
         return res.status(httpCode.OK).json({ token });
       }
     )(req, res, next);
+  },
+
+  verifyEmail: async function(token) {
+    if (!_.isString(token)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Token is not valid.");
+    }
+    const tokenPayload = accountHelper.verifyNormalToken(token);
+    if (!tokenPayload) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Token is not valid.");
+    }
+
+    const { _id, email } = tokenPayload;
+    if (!(_id && email)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Token is not valid.");
+    }
+
+    // set active
+    const { isUpdated } = await accountService.setVerification(_id);
+
+    return { isUpdated };
   }
 };

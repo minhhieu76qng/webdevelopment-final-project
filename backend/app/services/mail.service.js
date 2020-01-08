@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const httpCode = require("http-status-codes");
 const { ErrorHandler } = require("../helpers/error.helper");
-const { generateToken } = require("../helpers/account.helper");
+const accountHelper = require("../helpers/account.helper");
 
 class Mailer {
   constructor(user, pass) {
@@ -37,7 +37,6 @@ class Mailer {
 
 const { MAIL_USER, MAIL_PASSWORD } = process.env;
 if (!(MAIL_USER && MAIL_PASSWORD)) {
-  console.log("Application not contain MAIL_USER or MAIL_PASSWORD");
   process.exit(-1);
 }
 
@@ -45,11 +44,11 @@ const mailer = new Mailer(MAIL_USER, MAIL_PASSWORD);
 
 module.exports = {
   sendVerificationMail: async function({ _id, email }) {
-    const { JWTSECRET, VERIFIED_LINK } = process.env;
+    const { VERIFIED_LINK } = process.env;
 
-    const token = generateToken({ _id, email });
+    const token = accountHelper.generateNormalToken({ _id, email });
 
-    const link = `${VERIFIED_LINK}/active-account?token=${token}`;
+    const link = `${VERIFIED_LINK}/${token}`;
 
     const content = {
       subject: "Uber for Tutor - Verify account.",

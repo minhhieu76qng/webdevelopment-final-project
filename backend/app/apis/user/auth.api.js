@@ -24,4 +24,18 @@ router.post("/oauth/google", authService.loginWithGoogle);
 
 router.post("/oauth/facebook", authService.loginWithFacebook);
 
+router.put("/confirm-email", async (req, res, next) => {
+  const { token } = req.query;
+
+  try {
+    const { isUpdated } = await authService.verifyEmail(token);
+
+    return res.status(httpCode.OK).json({
+      isUpdated
+    });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

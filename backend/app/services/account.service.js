@@ -365,5 +365,45 @@ module.exports = {
         );
       }
     });
+  },
+
+  setBlock: async function(id, isBlock) {
+    if (!(id && mongoose.Types.ObjectId.isValid(id))) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account ID is not valid.");
+    }
+
+    const account = await accountRepo.findById(id);
+    if (!account) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account is not exist.");
+    }
+
+    const result = await accountRepo.setBlock(id, isBlock);
+    return {
+      isUpdated: result.nModified === 1
+    };
+  },
+
+  setVerification: async function(id) {
+    if (!(id && mongoose.Types.ObjectId.isValid(id))) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account ID is not valid.");
+    }
+
+    // tìm kiếm người dùng
+    const account = await accountRepo.findById(id);
+
+    if (!account) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account is not exist.");
+    }
+
+    if (account.isVerified === true) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "The account has been verified."
+      );
+    }
+
+    const result = await accountRepo.setVerification(id);
+
+    return { isUpdated: result.nModified === 1 };
   }
 };

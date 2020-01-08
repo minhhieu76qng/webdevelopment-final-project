@@ -47,5 +47,14 @@ module.exports = {
     const token = this.generateToken(temp._doc, { expiresIn: "1d" });
 
     return token;
+  },
+
+  generateNormalToken: function(payload) {
+    return this.generateUserToken(payload);
+  },
+
+  verifyNormalToken: function(token) {
+    const { JWTSECRET } = process.env;
+    return jwt.verify(token, JWTSECRET);
   }
 };
