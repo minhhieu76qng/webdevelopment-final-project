@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 import {
   Row,
   Col,
@@ -20,8 +20,9 @@ import avatarDefault from '../assets/imgs/avatar.jpg';
 import { toast } from '../components/widgets/toast';
 import FormCreateContract from '../components/contract/FormCreateContract';
 
-const TeacherDetail = () => {
+const TeacherDetail = ({ account }) => {
   const { teacherId } = useParams();
+  const history = useHistory();
   const [teacher, setTeacher] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   const [show, setShow] = useState(false);
@@ -41,6 +42,15 @@ const TeacherDetail = () => {
         setIsFetching(false);
       });
   }, [teacherId]);
+
+  const onButtonHireClick = () => {
+    // kiểm tra thử đăng nhập chưa
+    if (!account) {
+      history.push('/login');
+      return;
+    }
+    setShow(true);
+  };
 
   let cloneTeacher = null;
   if (teacher) {
@@ -196,7 +206,7 @@ $
                 variant='success'
                 // size='sm'
                 block
-                onClick={() => setShow(true)}
+                onClick={onButtonHireClick}
               >
                 Hire this teacher
               </Button>

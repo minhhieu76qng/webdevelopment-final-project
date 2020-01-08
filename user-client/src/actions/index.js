@@ -58,7 +58,7 @@ export function fetchCities() {
 
 export function fetchTags() {
   return dispatch => {
-    return Axios.get('/api/tags')
+    return Axios.get('/api/tags/list')
       .then(({ data: { tags } }) => {
         dispatch(setTags(tags));
       })

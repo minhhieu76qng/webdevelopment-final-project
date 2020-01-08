@@ -7,7 +7,6 @@ import {
   faAddressCard,
 } from '@fortawesome/free-solid-svg-icons';
 import Home from './views/Home';
-import TeacherDetail from './views/TeacherDetail';
 import LoginContainer from './containers/LoginContainer';
 import SignUp from './views/SignUp';
 import ProfileContainer from './containers/ProfileContainer';
@@ -17,6 +16,7 @@ import Contract from './views/account/contract';
 import WelcomeContainer from './containers/WelcomeContainer';
 import ContractDetailContainer from './containers/ContractDetailContainer';
 import EmailVerification from './views/EmailVerification';
+import TeacherDetailContainer from './containers/TeacherDetailContainer';
 
 const routes = {
   student: [
@@ -41,7 +41,7 @@ const routes = {
     {
       path: '/teachers/:teacherId',
       name: 'Detail',
-      component: TeacherDetail,
+      component: TeacherDetailContainer,
       layout: '',
     },
     {
