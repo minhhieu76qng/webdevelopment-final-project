@@ -2,6 +2,7 @@ const _ = require("lodash");
 const passport = require("passport");
 const httpCode = require("http-status-codes");
 const accountService = require("./account.service");
+const mailService = require("./mail.service");
 const { ErrorHandler } = require("../helpers/error.helper");
 const accountHelper = require("../helpers/account.helper");
 const { ROLES } = require("../constance/constance");
@@ -244,6 +245,63 @@ module.exports = {
 
     // set active
     const { isUpdated } = await accountService.setVerification(_id);
+
+    return { isUpdated };
+  },
+
+  sendForgotPasswordMail: async function(email) {
+    if (!accountHelper.isEmail(email)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Email is not valid.");
+    }
+
+    // kiem tra trong csdl co email nay khong
+    const account = await accountService.findByEmail(email);
+
+    if (!account) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Email is not exist.");
+    }
+
+    // kiem tra email co bi block hay chua verify hay khong
+    if (!account.isVerified) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Account has not been verified."
+      );
+    }
+
+    if (!(account.isBlock === false)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account has been blocked.");
+    }
+
+    const result = await mailService.sendForgotPasswordMail({
+      _id: account._id,
+      email: account.local.email
+    });
+
+    return { isSent: true };
+  },
+
+  forgotPassword: async function(token, newPassword, confirmPw) {
+    // kiem tra token -> exact de xem _id
+    if (!_.isString(token)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Token is not valid.");
+    }
+    const tokenPayload = accountHelper.verifyNormalToken(token);
+    if (!tokenPayload) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Token is not valid.");
+    }
+
+    const { _id, email } = tokenPayload;
+    console.log(_id, email);
+    if (!(_id && email)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Token is not valid.");
+    }
+
+    const { isUpdated } = await accountService.changePassword(
+      _id,
+      newPassword,
+      confirmPw
+    );
 
     return { isUpdated };
   }

@@ -63,5 +63,26 @@ module.exports = {
         "Internal Server Error"
       );
     }
+  },
+
+  sendForgotPasswordMail: async function({ _id, email }) {
+    const { CHANGE_PASSWORD_LINK } = process.env;
+
+    const token = accountHelper.generateNormalToken({ _id, email });
+
+    const link = `${CHANGE_PASSWORD_LINK}/${token}`;
+    const content = {
+      subject: "Uber for Tutor - Forgot password.",
+      html: `<p>Please click the below link to create new password!</p><a href="${link}">${link}</a>`
+    };
+
+    try {
+      return await mailer.sendMail(email, content);
+    } catch (err) {
+      throw new ErrorHandler(
+        httpCode.INTERNAL_SERVER_ERROR,
+        "Internal Server Error"
+      );
+    }
   }
 };

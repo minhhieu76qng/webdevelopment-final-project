@@ -38,4 +38,35 @@ router.put("/confirm-email", async (req, res, next) => {
   }
 });
 
+// send email
+router.put("/send-forgot-pw", async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const { isSent } = await authService.sendForgotPasswordMail(email);
+
+    return res.status(httpCode.OK).json({
+      isSent
+    });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// xu li thay doi mat khau
+router.put("/forgot-password", async (req, res, next) => {
+  const { token, newPassword, confirmPw } = req.body;
+  try {
+    const { isUpdated } = await authService.forgotPassword(
+      token,
+      newPassword,
+      confirmPw
+    );
+
+    return res.status(httpCode.OK).json({ isUpdated });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

@@ -17,6 +17,8 @@ import WelcomeContainer from './containers/WelcomeContainer';
 import ContractDetailContainer from './containers/ContractDetailContainer';
 import EmailVerification from './views/EmailVerification';
 import TeacherDetailContainer from './containers/TeacherDetailContainer';
+import ForgotPassword from './views/ForgotPassword';
+import ChangePassword from './views/ChangePassword';
 
 const routes = {
   student: [
@@ -30,6 +32,12 @@ const routes = {
       path: '/sign-up',
       name: 'Sign Up',
       component: SignUp,
+      layout: '',
+    },
+    {
+      path: '/forgot-password',
+      name: 'Forgot password',
+      component: ForgotPassword,
       layout: '',
     },
     {
@@ -48,6 +56,12 @@ const routes = {
       path: '/confirm/:token',
       name: 'Mail confirm',
       component: EmailVerification,
+      layout: '',
+    },
+    {
+      path: '/change-password/:token',
+      name: 'Change password',
+      component: ChangePassword,
       layout: '',
     },
     {

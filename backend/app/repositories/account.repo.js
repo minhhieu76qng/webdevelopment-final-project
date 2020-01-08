@@ -125,5 +125,13 @@ module.exports = {
 
   setVerification: async function(accountId) {
     return await Account.updateOne({ _id: accountId }, { isVerified: true });
+  },
+
+  changePassword: async function(accountId, newPassword) {
+    const hash = await bcrypt.hash(newPassword, SALT_ROUND);
+    return await Account.updateOne(
+      { _id: accountId },
+      { "local.password": hash }
+    );
   }
 };
