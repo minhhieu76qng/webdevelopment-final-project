@@ -159,6 +159,28 @@ router.put(
   }
 );
 
+// đánh giá
+router.put(
+  "/:id/rating",
+  authenticateUser(),
+  authorize(ROLES.student),
+  async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const { isUpdated } = await contractService.studentRating(
+        id,
+        req.user._id,
+        req.body
+      );
+      return res.status(httpCode.OK).json({
+        isUpdated
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 // reject contract -> teacher -> change status
 
 // cancel contract -> student -> delete

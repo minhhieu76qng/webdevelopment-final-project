@@ -168,6 +168,13 @@ module.exports = {
     return totalModified;
   },
 
+  studentRating: async function(contractId, { rating, text, date }) {
+    return await Contract.updateOne(
+      { _id: contractId },
+      { comment: { rating, text, date } }
+    );
+  },
+
   // -------------- COUNT --------------------
   count: async function(accountId, filter = {}) {
     return await Contract.aggregate([

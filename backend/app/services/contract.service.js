@@ -447,5 +447,67 @@ module.exports = {
     }
   },
 
+  studentRating: async function(contractId, accountId, { rating, text, date }) {
+    if (!ObjectId.isValid(contractId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Contract ID is not valid.");
+    }
+
+    if (!ObjectId.isValid(accountId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account ID is not valid.");
+    }
+
+    rating = _.toInteger(rating);
+
+    if (!(_.isNumber(rating) && rating >= 1 && rating <= 5)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Rating must be a number and between 1 and 5 stars."
+      );
+    }
+
+    if (!_.isString(text) && text.length > 0) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Required a comment.");
+    }
+
+    const ratingDate = moment(date);
+
+    if (
+      !(
+        ratingDate &&
+        ratingDate.isValid() &&
+        moment(ratingDate).isSame(new Date(), "day")
+      )
+    ) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Date is not valid.");
+    }
+
+    const { contract } = await this.getContractById(contractId, accountId);
+
+    if (!contract) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Contract is not exist.");
+    }
+
+    // kiểm tra đã paid hay chưa
+    console.log(contract);
+    if (!(contract.status === CONTRACT_STATUS.paid)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Please pay before rating.");
+    }
+
+    // kiểm tra có đánh giá hay chưa
+    if (contract.comment) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Contract has been rated.");
+    }
+
+    const result = await contractRepo.studentRating(contractId, {
+      rating,
+      text,
+      date: ratingDate
+    });
+
+    return {
+      isUpdated: result.nModified === 1
+    };
+  },
+
   rejectContract: async function(contractId) {}
 };

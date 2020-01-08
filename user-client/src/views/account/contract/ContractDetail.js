@@ -8,7 +8,7 @@ import {
 import { Link, useParams } from 'react-router-dom';
 import Axios from 'axios';
 import { Fade } from 'react-reveal';
-import { Spinner, Badge, Button } from 'react-bootstrap';
+import { Spinner, Badge, Button, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 import _ from 'lodash';
 import { toast } from '../../../components/widgets/toast';
@@ -16,6 +16,7 @@ import '../../../assets/scss/Contract.scss';
 import { getStatus } from '../../../helpers/helpers';
 import ROLES from '../../../constance/Role';
 import ContractStatus from '../../../constance/ContractStatus';
+import FormRating from '../../../components/contract/FormRating';
 
 const ContractDetail = ({ account }) => {
   const { contractId } = useParams();
@@ -93,82 +94,127 @@ Contracts
       <div className='mt-4 contract-detail'>
         {!isFetching && contract && (
           <Fade>
-            <div>
-              <table className='table-detail'>
-                <tbody>
-                  <tr>
-                    <td className='title'>Contract name:</td>
-                    <td className='content font-weight-bold'>
-                      {contract.contractName}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='title'>Teacher:</td>
-                    <td className='content'>
-                      <Link
-                        to={`/teachers/${teacherId}`}
-                        style={{ textDecoration: 'underline' }}
-                      >
-                        {teacherName && teacherName}
-                      </Link>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='title'>Student:</td>
-                    <td className='content'>{studentName && studentName}</td>
-                  </tr>
-                  <tr>
-                    <td className='title'>Starting date:</td>
-                    <td className='content'>
-                      {moment(contract.startingDate).format('LL')}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='title'>Rental hour:</td>
-                    <td className='content'>{`${contract.rentalHour}h`}</td>
-                  </tr>
-                  <tr>
-                    <td className='title'>Price per hour:</td>
-                    <td className='content'>{`$${contract.pricePerHour}`}</td>
-                  </tr>
-                  <tr>
-                    <td className='title'>Status:</td>
-                    <td className='content'>
-                      <Badge variant={getStatus(contract.status)}>
-                        {_.upperFirst(_.toLower(contract.status))}
-                      </Badge>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='title'>Status history:</td>
-                    <td className='content'>
-                      <table className='table-status'>
-                        <thead>
-                          <tr className='font-weight-bold'>
-                            <td style={{ width: '40%', padding: 0 }}>Status</td>
-                            <td style={{ padding: 0 }}>Time</td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {contract.historyStatus &&
-                            _.isArray(contract.historyStatus) &&
-                            contract.historyStatus.map(status => (
-                              <tr>
-                                <td>
-                                  <Badge variant={getStatus(status.stt)}>
-                                    {_.upperFirst(_.toLower(status.stt))}
-                                  </Badge>
-                                </td>
-                                <td>{moment(status.date).format('LL')}</td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <Row>
+              <Col xs={12} md={8} style={{ maxWidth: 400 }}>
+                <table className='table-detail'>
+                  <tbody>
+                    <tr>
+                      <td className='title'>Contract name:</td>
+                      <td className='content font-weight-bold'>
+                        {contract.contractName}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className='title'>Teacher:</td>
+                      <td className='content'>
+                        <Link
+                          to={`/teachers/${teacherId}`}
+                          style={{ textDecoration: 'underline' }}
+                        >
+                          {teacherName && teacherName}
+                        </Link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className='title'>Student:</td>
+                      <td className='content'>{studentName && studentName}</td>
+                    </tr>
+                    <tr>
+                      <td className='title'>Starting date:</td>
+                      <td className='content'>
+                        {moment(contract.startingDate).format('LL')}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className='title'>Rental hour:</td>
+                      <td className='content'>{`${contract.rentalHour}h`}</td>
+                    </tr>
+                    <tr>
+                      <td className='title'>Price per hour:</td>
+                      <td className='content'>{`$${contract.pricePerHour}`}</td>
+                    </tr>
+                    <tr>
+                      <td className='title'>Status:</td>
+                      <td className='content'>
+                        <Badge variant={getStatus(contract.status)}>
+                          {_.upperFirst(_.toLower(contract.status))}
+                        </Badge>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className='title'>Status history:</td>
+                      <td className='content'>
+                        <table className='table-status'>
+                          <thead>
+                            <tr className='font-weight-bold'>
+                              <td style={{ width: '40%', padding: 0 }}>
+                                Status
+                              </td>
+                              <td style={{ padding: 0 }}>Time</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {contract.historyStatus &&
+                              _.isArray(contract.historyStatus) &&
+                              contract.historyStatus.map(status => (
+                                <tr>
+                                  <td>
+                                    <Badge variant={getStatus(status.stt)}>
+                                      {_.upperFirst(_.toLower(status.stt))}
+                                    </Badge>
+                                  </td>
+                                  <td>{moment(status.date).format('LL')}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                {account &&
+                  account.role === ROLES.student &&
+                  contract &&
+                  contract.status !== ContractStatus.paid && (
+                    <>
+                      <hr />
+                      <div>
+                        <Button
+                          size='sm'
+                          variant='success'
+                          className='mr-2'
+                          onClick={onPayClick}
+                        >
+                          <FontAwesomeIcon
+                            className='mr-2'
+                            icon={faMoneyBillAlt}
+                          />
+                          {' '}
+                          Pay
+                        </Button>
+                        <Button size='sm' variant='danger'>
+                          <FontAwesomeIcon className='mr-2' icon={faBan} />
+                          {' '}
+                          Complain
+                        </Button>
+                      </div>
+                    </>
+                  )}
+              </Col>
+              <Col>
+                {account &&
+                  account.role === ROLES.student &&
+                  contract &&
+                  contract.status === ContractStatus.paid &&
+                  !contract.comment && (
+                    <FormRating
+                      contractId={contractId}
+                      onSuccess={fetchContract}
+                    />
+                  )}
+              </Col>
+            </Row>
           </Fade>
         )}
         {isFetching && (
@@ -180,33 +226,6 @@ Contracts
           <div className='text-center font-italic'>Contract is not exist.</div>
         )}
       </div>
-
-      {account &&
-        account.role === ROLES.student &&
-        contract &&
-        contract.status !== ContractStatus.paid && (
-          <>
-            <hr />
-
-            <div>
-              <Button
-                size='sm'
-                variant='success'
-                className='mr-2'
-                onClick={onPayClick}
-              >
-                <FontAwesomeIcon className='mr-2' icon={faMoneyBillAlt} />
-                {' '}
-Pay
-              </Button>
-              <Button size='sm' variant='danger'>
-                <FontAwesomeIcon className='mr-2' icon={faBan} />
-                {' '}
-Complain
-              </Button>
-            </div>
-          </>
-        )}
     </>
   );
 };

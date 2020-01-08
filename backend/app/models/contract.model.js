@@ -42,7 +42,7 @@ const ContractSchema = new Schema(
       }
     ],
     comment: {
-      rate: Number,
+      rating: Number,
       text: String,
       date: Date
     }
