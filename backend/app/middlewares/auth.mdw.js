@@ -68,6 +68,20 @@ module.exports = {
       if (roles.length && !roles.includes(req.user.role)) {
         throw new ErrorHandler(httpCode.UNAUTHORIZED, "Unauthorized");
       }
+
+      if (req.user.isBlocked) {
+        throw new ErrorHandler(
+          httpCode.FORBIDDEN,
+          "Your account has been block. Contact your administrator for more details."
+        );
+      }
+
+      if (!req.user.isVerified) {
+        throw new ErrorHandler(
+          httpCode.FORBIDDEN,
+          "Your account is not verified. Check your mail and follow our guild."
+        );
+      }
       next();
     };
   }

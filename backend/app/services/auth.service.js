@@ -36,6 +36,13 @@ module.exports = {
           );
         }
 
+        if (account.isBlock) {
+          throw new ErrorHandler(
+            httpCode.FORBIDDEN,
+            "Account has been blocked. Contact your administrator for more details."
+          );
+        }
+
         const token = accountHelper.createToken(account);
 
         return res.status(httpCode.OK).json({ token });
@@ -86,6 +93,20 @@ module.exports = {
             }
 
             existAccount = await accountService.createNewSocialAccount(temp);
+          }
+
+          if (!existAccount.isVerified) {
+            throw new ErrorHandler(
+              httpCode.UNAUTHORIZED,
+              "Account is not verified."
+            );
+          }
+
+          if (existAccount.isBlock) {
+            throw new ErrorHandler(
+              httpCode.FORBIDDEN,
+              "Account has been blocked. Contact your administrator for more details."
+            );
           }
 
           const token = accountHelper.createToken(existAccount);
@@ -140,6 +161,20 @@ module.exports = {
             existAccount = await accountService.createNewSocialAccount(temp);
           }
 
+          if (!existAccount.isVerified) {
+            throw new ErrorHandler(
+              httpCode.UNAUTHORIZED,
+              "Account is not verified."
+            );
+          }
+
+          if (existAccount.isBlock) {
+            throw new ErrorHandler(
+              httpCode.FORBIDDEN,
+              "Account has been blocked. Contact your administrator for more details."
+            );
+          }
+
           const token = accountHelper.createToken(existAccount);
 
           return res.status(httpCode.OK).json({
@@ -172,10 +207,17 @@ module.exports = {
           );
         }
 
-        if (!account.isVerified) {
+        if (!existAccount.isVerified) {
           throw new ErrorHandler(
             httpCode.UNAUTHORIZED,
             "Account is not verified."
+          );
+        }
+
+        if (existAccount.isBlock) {
+          throw new ErrorHandler(
+            httpCode.FORBIDDEN,
+            "Account has been blocked. Contact your administrator for more details."
           );
         }
 
