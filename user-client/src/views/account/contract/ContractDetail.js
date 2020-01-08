@@ -11,6 +11,7 @@ import { Fade } from 'react-reveal';
 import { Spinner, Badge, Button, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 import _ from 'lodash';
+import ReactRating from 'react-star-ratings';
 import { toast } from '../../../components/widgets/toast';
 import '../../../assets/scss/Contract.scss';
 import { getStatus } from '../../../helpers/helpers';
@@ -170,12 +171,45 @@ Contracts
                         </table>
                       </td>
                     </tr>
+                    {contract.comment && (
+                      <tr>
+                        <td>Comment:</td>
+                        <td>
+                          <div>
+                            <span className='font-weight-bold'>
+                              Content: &nbsp;
+                            </span>
+                            {contract.comment.text}
+                          </div>
+                          <div className='mt-2'>
+                            <span
+                              className='font-weight-bold d-inline-block'
+                              style={{ verticalAlign: 'bottom', lineHeight: 1 }}
+                            >
+                              Rating: &nbsp;
+                            </span>
+                            <ReactRating
+                              rating={contract.comment.rating}
+                              starDimension='20px'
+                              starSpacing='3px'
+                              starRatedColor='#162ec9'
+                              starHoverColor='#162ec9'
+                            />
+                          </div>
+                          <div className='mt-2'>
+                            <span className='font-weight-bold'>
+                              Date: &nbsp;
+                            </span>
+                            {moment(contract.comment.date).format('LL')}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
 
                 {account &&
                   account.role === ROLES.student &&
-                  contract &&
                   contract.status !== ContractStatus.paid && (
                     <>
                       <hr />

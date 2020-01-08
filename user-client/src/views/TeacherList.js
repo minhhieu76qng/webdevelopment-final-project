@@ -255,7 +255,9 @@ const TeacherList = () => {
           ))}
         {!isFetching && paginateItems.length > 0 && (
           <div className='text-center mt-3'>
-            <Pagination className='d-inline-flex'>{paginateItems}</Pagination>
+            <Pagination size='sm' className='d-inline-flex'>
+              {paginateItems}
+            </Pagination>
           </div>
         )}
         {!isFetching && _.isArray(temp) && temp.length === 0 && (

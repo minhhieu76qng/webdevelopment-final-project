@@ -44,7 +44,7 @@ const ModalSetContractName = ({
   return (
     <>
       {account && account.role === ROLE.teacher && (
-        <Modal show={show} onHide={() => setShow(false)}>
+        <Modal show={show} onHide={() => setShow(false)} centered scrollable>
           <Modal.Header closeButton>
             <Modal.Title>Enter contracts name</Modal.Title>
           </Modal.Header>

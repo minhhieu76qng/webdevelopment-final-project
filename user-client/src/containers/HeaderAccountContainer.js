@@ -16,7 +16,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HeaderAccount);
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderAccount);

@@ -96,9 +96,11 @@ const ContractList = ({
                 />
               </td>
             )}
+
             <td className='font-weight-bold' style={{ width: '35%' }}>
-              Contract name
+              Contract name / Description
             </td>
+
             {account && account.role === ROLES.teacher && (
               <td className='font-weight-bold' style={{ width: '25%' }}>
                 Student
@@ -150,7 +152,16 @@ const ContractList = ({
                       </td>
                     )}
 
-                    <td>{ct.contractName}</td>
+                    {ct.contractName && (
+                      <td className='font-weight-bold' style={{ width: '35%' }}>
+                        {ct.contractName}
+                      </td>
+                    )}
+                    {!ct.contractName && (
+                      <td className='font-weight-bold' style={{ width: '35%' }}>
+                        {ct.requestMsg}
+                      </td>
+                    )}
 
                     {account && account.role === ROLES.teacher && (
                       <td>{`${sName.firstName} ${sName.lastName}`}</td>
