@@ -1,11 +1,13 @@
 const _ = require("lodash");
 const moment = require("moment");
+const mongoose = require("mongoose");
 const ObjectId = require("mongoose").Types.ObjectId;
 const httpCode = require("http-status-codes");
 const { ErrorHandler } = require("../helpers/error.helper");
 const teacherService = require("./teacher.service");
 const chatService = require("./chat.service");
 const contractRepo = require("../repositories/contract.repo");
+const paymentService = require("./payment.service");
 const {
   CONTRACT_STATUS,
   MAX_LENGTH_CONTRACT_NAME
@@ -105,7 +107,7 @@ module.exports = {
     const contractResult = await contractRepo.sendRequest(payload);
 
     // kiểm tra room có tồn tại hay không
-    const existRoom = await chatService.findRoomWithUsers(
+    let existRoom = await chatService.findRoomWithUsers(
       payload.studentAId,
       payload.teacherAId
     );
@@ -342,6 +344,107 @@ module.exports = {
       nModified: totalModified,
       contracts: contractsWithName
     };
+  },
+
+  payContract: async function(contractId, studentAId) {
+    if (!ObjectId.isValid(contractId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Contract ID is not valid.");
+    }
+    if (!ObjectId.isValid(studentAId)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Student account ID is not valid."
+      );
+    }
+
+    // kiểm tra hợp đồng có tồn tại hay không
+    const contract = await contractRepo.getContractDetail(
+      contractId,
+      studentAId
+    );
+
+    if (!contract) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Contract is not exist.");
+    }
+
+    // người thanh toán không phải là học sinh
+    if (!(_.toString(contract.student._id) === _.toString(studentAId))) {
+      throw new ErrorHandler(
+        httpCode.FORBIDDEN,
+        "You do not authorize payment for this student's contract."
+      );
+    }
+
+    // hợp đồng chỉ được thanh toán khi ở trạng thái teaching hoặc complain
+    let isValidStatus = false;
+    if (!isValidStatus && contract.status === CONTRACT_STATUS.teaching) {
+      isValidStatus = true;
+    }
+    if (!isValidStatus && contract.status === CONTRACT_STATUS.complain) {
+      isValidStatus = true;
+    }
+    if (!isValidStatus) {
+      throw new ErrorHandler(
+        httpCode.FORBIDDEN,
+        'Only pay when contract status is "Teaching" or "Complain"'
+      );
+    }
+
+    // transaction
+    const _session = await mongoose.startSession();
+    _session.startTransaction();
+    try {
+      // gọi một function để thanh toán tiền tới tài khoản của teacher
+      paymentService.pay(contract.teacher._id, _session);
+
+      // lấy danh sách các contracts của giáo viên này
+      // lấy các contract paid / hoàn thành -> completed Rate
+      const teacherContractList = await contractRepo.getAllDoneContractOfTeacher(
+        contract.teacher._id
+      );
+      if (!teacherContractList) {
+        throw new ErrorHandler(
+          httpCode.INTERNAL_SERVER_ERROR,
+          "Internal Server Error"
+        );
+      }
+      const total = teacherContractList.length;
+      let paidCount = 0;
+      teacherContractList.map(ct => {
+        if (ct.status === CONTRACT_STATUS.paid) {
+          paidCount += 1;
+        }
+        return 1;
+      });
+
+      // cộng tiền, thời gian, ... cho giáo viên
+      await teacherService.updateStatisticsAfterPayment(
+        contract.teacher._id,
+        {
+          hours: contract.rentalHour,
+          price: contract.pricePerHour,
+          completedRate: _.round(((paidCount + 1) / (total + 1)) * 100, 2)
+        },
+        _session
+      );
+
+      // chuyển trạng thái của hợp đồng
+      const result = await contractRepo.updateContractsStatus(
+        [contractId],
+        CONTRACT_STATUS.paid,
+        new Date(),
+        _session
+      );
+
+      await _session.commitTransaction();
+      _session.endSession();
+
+      return { isUpdated: result.nModified > 0, nModified: result.nModified };
+    } catch (err) {
+      await _session.abortTransaction();
+      _session.endSession();
+      throw err;
+    }
   },
 
   rejectContract: async function(contractId) {}

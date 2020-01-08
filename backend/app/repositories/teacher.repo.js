@@ -354,5 +354,22 @@ module.exports = {
       { catId: category, tags: tags, pricePerHour: price, firstUpdated: true },
       { session }
     );
+  },
+
+  updateAfterPayment: async function(teacherId, payload, session = null) {
+    return await Teacher.updateOne(
+      { _id: teacherId },
+      {
+        completedRate: payload.completedRate,
+        $inc: {
+          totalJob: 1,
+          hoursWorked: payload.hours,
+          totalEarned: payload.hours * payload.price
+        }
+      },
+      {
+        session
+      }
+    );
   }
 };

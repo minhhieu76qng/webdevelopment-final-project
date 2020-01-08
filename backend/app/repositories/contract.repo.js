@@ -34,25 +34,37 @@ module.exports = {
         }
       },
       {
+        $unwind: {
+          path: "$student"
+        }
+      },
+      {
         $lookup: {
           from: "accounts",
           localField: "teacherAId",
           foreignField: "_id",
           as: "teacher"
         }
+      },
+      {
+        $unwind: {
+          path: "$teacher"
+        }
+      },
+      {
+        $lookup: {
+          from: "teachers",
+          localField: "teacherAId",
+          foreignField: "accountId",
+          as: "teacher.teacherInfo"
+        }
+      },
+      {
+        $unwind: {
+          path: "$teacher.teacherInfo"
+        }
       }
     ]);
-
-    contracts = contracts.map(ct => {
-      if (_.isArray(ct.student) && ct.student.length > 0) {
-        ct.student = ct.student[0];
-      }
-      if (_.isArray(ct.teacher) && ct.teacher.length > 0) {
-        ct.teacher = ct.teacher[0];
-      }
-
-      return ct;
-    });
 
     return contracts;
   },
@@ -85,6 +97,20 @@ module.exports = {
     return contracts[0];
   },
 
+  getAllDoneContractOfTeacher: async function(accountId) {
+    return Contract.find({
+      teacherAId: accountId,
+      $or: [
+        {
+          status: CONTRACT_STATUS.paid
+        },
+        {
+          status: CONTRACT_STATUS.complain
+        }
+      ]
+    });
+  },
+
   // -------------- SET ---------------------
 
   sendRequest: async function(payload, session = null) {
@@ -100,12 +126,16 @@ module.exports = {
   updateContractsStatus: async function(
     contracts,
     contractStatus,
-    acceptedDate = new Date()
+    acceptedDate = new Date(),
+    session = null
   ) {
     const statusObj = { stt: contractStatus, date: acceptedDate };
     return await Contract.updateMany(
       { _id: { $in: contracts } },
-      { status: contractStatus, $push: { historyStatus: statusObj } }
+      { status: contractStatus, $push: { historyStatus: statusObj } },
+      {
+        session
+      }
     );
   },
 

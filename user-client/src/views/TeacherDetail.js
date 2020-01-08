@@ -162,7 +162,7 @@ $
                     </li>
                     <li className='col-6 col-sm-3'>
                       <h3 className='static-value'>
-                        {cloneTeacher.hoursWorked}
+                        {`${cloneTeacher.hoursWorked}h`}
                       </h3>
                       <div className='static-title'>Hours worked</div>
                     </li>

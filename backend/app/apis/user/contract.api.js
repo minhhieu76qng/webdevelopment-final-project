@@ -142,6 +142,23 @@ router.put(
   }
 );
 
+// học sinh thanh toán
+router.put(
+  "/:id/payment",
+  authenticateUser(),
+  authorize(ROLES.student),
+  async (req, res, next) => {
+    const { id } = req.params;
+
+    try {
+      const { isUpdated } = await contractService.payContract(id, req.user._id);
+      return res.status(httpCode.OK).json({ isUpdated });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 // reject contract -> teacher -> change status
 
 // cancel contract -> student -> delete

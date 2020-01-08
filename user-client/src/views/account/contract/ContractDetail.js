@@ -1,22 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faComments } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowLeft,
+  faMoneyBillAlt,
+  faBan,
+} from '@fortawesome/free-solid-svg-icons';
 import { Link, useParams } from 'react-router-dom';
 import Axios from 'axios';
 import { Fade } from 'react-reveal';
-import { Spinner, Badge } from 'react-bootstrap';
+import { Spinner, Badge, Button } from 'react-bootstrap';
 import moment from 'moment';
 import _ from 'lodash';
 import { toast } from '../../../components/widgets/toast';
 import '../../../assets/scss/Contract.scss';
 import { getStatus } from '../../../helpers/helpers';
+import ROLES from '../../../constance/Role';
+import ContractStatus from '../../../constance/ContractStatus';
 
-const ContractDetail = () => {
+const ContractDetail = ({ account }) => {
   const { contractId } = useParams();
   const [isFetching, setFetching] = useState(false);
   const [contract, setContract] = useState(null);
 
-  useEffect(() => {
+  const fetchContract = useCallback(() => {
     setFetching(true);
     Axios.get(`/api/user/contracts/detail/${contractId}`)
       .then(({ data: { contract: resContract } }) => {
@@ -31,18 +37,45 @@ const ContractDetail = () => {
         setFetching(false);
       });
   }, [contractId]);
-  const teacher = { id: null, name: null };
-  const student = { id: null, name: null };
+
+  useEffect(() => {
+    fetchContract();
+  }, [contractId, fetchContract]);
+
+  const onPayClick = () => {
+    // gửi thông tin về server
+    /* eslint no-alert: "off" */
+    const confirmPayment = window.confirm('Are you sure to pay this course?');
+    if (confirmPayment) {
+      Axios.put(`/api/user/contracts/${contractId}/payment`)
+        .then(({ data: { isUpdated } }) => {
+          if (isUpdated) {
+            toast.success('Payment success!');
+            fetchContract();
+          }
+        })
+        .catch(err => {
+          if (err && err.response && err.response.data.error) {
+            toast.error(err.response.data.error.msg);
+          }
+        });
+    }
+  };
+
+  let teacherName = null;
+  let teacherId = null;
+  let studentName = null;
   if (contract) {
     if (contract.teacher) {
       const { firstName, lastName } = contract.teacher.name;
-      teacher.id = contract.teacher._id;
-      teacher.name = `${firstName} ${lastName}`;
+      teacherName = `${firstName} ${lastName}`;
+      if (contract.teacher.teacherInfo) {
+        teacherId = contract.teacher.teacherInfo._id;
+      }
     }
     if (contract.student) {
       const { firstName, lastName } = contract.student.name;
-      teacher.id = contract.student._id;
-      student.name = `${firstName} ${lastName}`;
+      studentName = `${firstName} ${lastName}`;
     }
   }
   return (
@@ -56,6 +89,7 @@ Contracts
           </h5>
         </Link>
       </div>
+
       <div className='mt-4 contract-detail'>
         {!isFetching && contract && (
           <Fade>
@@ -71,20 +105,17 @@ Contracts
                   <tr>
                     <td className='title'>Teacher:</td>
                     <td className='content'>
-                      <Link to={`/teachers/${teacher.id}`}>
-                        {teacher && teacher.name}
-                      </Link>
                       <Link
-                        to='/account/messages/?to=5e04db4c5ce492119fc8c0d8'
-                        className='ml-2'
+                        to={`/teachers/${teacherId}`}
+                        style={{ textDecoration: 'underline' }}
                       >
-                        <FontAwesomeIcon icon={faComments} />
+                        {teacherName && teacherName}
                       </Link>
                     </td>
                   </tr>
                   <tr>
                     <td className='title'>Student:</td>
-                    <td className='content'>{student && student.name}</td>
+                    <td className='content'>{studentName && studentName}</td>
                   </tr>
                   <tr>
                     <td className='title'>Starting date:</td>
@@ -149,6 +180,33 @@ Contracts
           <div className='text-center font-italic'>Contract is not exist.</div>
         )}
       </div>
+
+      {account &&
+        account.role === ROLES.student &&
+        contract &&
+        contract.status !== ContractStatus.paid && (
+          <>
+            <hr />
+
+            <div>
+              <Button
+                size='sm'
+                variant='success'
+                className='mr-2'
+                onClick={onPayClick}
+              >
+                <FontAwesomeIcon className='mr-2' icon={faMoneyBillAlt} />
+                {' '}
+Pay
+              </Button>
+              <Button size='sm' variant='danger'>
+                <FontAwesomeIcon className='mr-2' icon={faBan} />
+                {' '}
+Complain
+              </Button>
+            </div>
+          </>
+        )}
     </>
   );
 };

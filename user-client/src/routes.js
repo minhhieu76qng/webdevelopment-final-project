@@ -15,7 +15,7 @@ import TeacherList from './views/TeacherList';
 import Message from './views/account/message/Message';
 import Contract from './views/account/contract';
 import WelcomeContainer from './containers/WelcomeContainer';
-import ContractDetail from './views/account/contract/ContractDetail';
+import ContractDetailContainer from './containers/ContractDetailContainer';
 
 const routes = {
   student: [
@@ -77,7 +77,7 @@ const routes = {
       exact: true,
       path: '/contracts/detail/:contractId',
       name: 'Contracts',
-      component: ContractDetail,
+      component: ContractDetailContainer,
       layout: '/account',
     },
     {
@@ -124,7 +124,7 @@ const routes = {
       exact: true,
       path: '/contracts/detail/:contractId',
       name: 'Contracts',
-      component: ContractDetail,
+      component: ContractDetailContainer,
       layout: '/account',
     },
     {

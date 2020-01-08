@@ -19,7 +19,7 @@ const ContractList = ({
   setSelectedItems,
 }) => {
   useEffect(() => {
-    if (!_.isEmpty(selectedItems)) {
+    if (selectMode === false && !_.isEmpty(selectedItems)) {
       setSelectedItems([]);
     }
   }, [selectMode, setSelectedItems, selectedItems]);

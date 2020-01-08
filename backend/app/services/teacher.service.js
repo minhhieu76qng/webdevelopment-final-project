@@ -7,6 +7,7 @@ const accountRepo = require("../repositories/account.repo");
 const tagService = require("./tag.service");
 const categoryService = require("./category.service");
 const cityService = require("./city.service");
+const { MIN_PRICE, MAX_PRICE } = require("../constance/constance");
 
 module.exports = {
   getTeacherTags: async function(accountId) {
@@ -21,8 +22,6 @@ module.exports = {
   },
 
   updatePrice: async function(accountId, newPrice) {
-    const MIN = 1;
-
     const tmpPrice = _.toInteger(newPrice);
 
     if (!_.isNumber(tmpPrice)) {
@@ -32,10 +31,17 @@ module.exports = {
       );
     }
 
-    if (tmpPrice < MIN) {
+    if (tmpPrice < MIN_PRICE) {
       throw new ErrorHandler(
         httpCode.BAD_REQUEST,
-        `New price must be greater than or equal to ${MIN}.`
+        `New price must be greater than or equal to ${MIN_PRICE}.`
+      );
+    }
+
+    if (tmpPrice > MAX_PRICE) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        `New price must be lower than or equal to ${MAX_PRICE}.`
       );
     }
 
@@ -241,10 +247,10 @@ module.exports = {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Price must be a number.");
     }
 
-    if (!(payload.price >= 5 && payload.price <= 1000)) {
+    if (!(payload.price >= MIN_PRICE && payload.price <= MAX_PRICE)) {
       throw new ErrorHandler(
         httpCode.BAD_REQUEST,
-        "Price must be between 5 and 1000."
+        `Price must be between ${MIN_PRICE} and ${MAX_PRICE}.`
       );
     }
 
@@ -320,5 +326,48 @@ module.exports = {
 
   getTeacherByAccountId: async function(accountId) {
     return await teacherRepo.findTeacherByAccountId(accountId);
+  },
+
+  updateStatisticsAfterPayment: async function(
+    accountId,
+    { hours, price, completedRate },
+    _session = null
+  ) {
+    if (!(_.isNumber(hours) && hours >= 1)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Hours worked must be positive number."
+      );
+    }
+
+    if (!(_.isNumber(price) && price >= MIN_PRICE && price <= MAX_PRICE)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        `Price must be between ${MIN_PRICE} and ${MAX_PRICE}.`
+      );
+    }
+
+    if (!(_.isNumber(completedRate) && completedRate >= 0)) {
+      throw new ErrorHandler(
+        "Completed rate must be a number and greater or equal to 0."
+      );
+    }
+    if (!mongoose.Types.ObjectId.isValid(accountId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account ID is not valid.");
+    }
+
+    const teacher = await teacherRepo.findTeacherByAccountId(accountId);
+
+    if (!teacher) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Teacher is not exist.");
+    }
+
+    const result = await teacherRepo.updateAfterPayment(
+      teacher._id,
+      { price, hours, completedRate },
+      _session
+    );
+
+    return { isUpdated: result.nModified };
   }
 };
