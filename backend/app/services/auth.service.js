@@ -208,14 +208,14 @@ module.exports = {
           );
         }
 
-        if (!existAccount.isVerified) {
+        if (!account.isVerified) {
           throw new ErrorHandler(
             httpCode.UNAUTHORIZED,
             "Account is not verified."
           );
         }
 
-        if (existAccount.isBlock) {
+        if (account.isBlock) {
           throw new ErrorHandler(
             httpCode.FORBIDDEN,
             "Account has been blocked. Contact your administrator for more details."

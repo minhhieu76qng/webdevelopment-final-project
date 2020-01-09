@@ -8,12 +8,14 @@ import {
   Col,
   Avatar,
   Skeleton,
+  Button,
 } from 'antd';
 import shortid from 'shortid';
 import _ from 'lodash';
 import moment from 'moment';
 import Axios from 'axios';
 import '../assets/scss/User.scss';
+import Constance from '../constance/const';
 
 const columns = [
   {
@@ -145,9 +147,11 @@ const Users = () => {
           joinDate: moment(new Date(account.createdAt), 'MM-DD-YYYY').format(
             'll',
           ),
-          role: _.upperFirst(_.lowerCase(account.role)),
+          roleDisplay: _.upperFirst(_.lowerCase(account.role)),
+          role: account.role,
           avatar: account.avatar,
           teacher: account.teacher ? account.teacher : null,
+          isBlock: account.isBlock,
         };
 
         setAccountDetail(temp);
@@ -166,6 +170,28 @@ const Users = () => {
     return {
       onClick: () => viewAccountDetail(record._id),
     };
+  };
+
+  const onBlockUserClick = accountId => {
+    Axios.put(`/api/admin/accounts/${accountId}/block`)
+      .then(({ data: { isUpdated } }) => {
+        if (isUpdated) {
+          notification['success']({
+            message: 'Success',
+            description: 'Block user successfully.',
+          });
+          setModalDetail(false);
+          fetchList();
+        }
+      })
+      .catch(err => {
+        if (err && err.response && err.response.data.error) {
+          notification['error']({
+            message: 'Success',
+            description: err.response.data.error.msg,
+          });
+        }
+      });
   };
 
   return (
@@ -193,86 +219,111 @@ const Users = () => {
         {!accountDetail && <Skeleton active />}
         {accountDetail && (
           // hien thi
-          <Row gutter={20}>
-            <Col span={6}>
-              {!accountDetail.avatar && (
-                <Avatar shape='square' size={80} icon='user' />
-              )}
-              {accountDetail.avatar && (
-                <Avatar shape='square' size={80} src={accountDetail.avatar} />
-              )}
-            </Col>
-            <Col span={18}>
-              <Row gutter={20} className='table'>
-                <Col className='title' span={6}>
-                  Id:
-                </Col>
-                <Col className='content' span={18}>
-                  {accountDetail._id}
-                </Col>
-              </Row>
-              <Row gutter={20} className='table'>
-                <Col className='title' span={6}>
-                  Name:
-                </Col>
-                <Col className='content' span={18}>
-                  {accountDetail.name}
-                </Col>
-              </Row>
-              <Row gutter={20} className='table'>
-                <Col className='title' span={6}>
-                  Role:
-                </Col>
-                <Col className='content' span={18}>
-                  {accountDetail.role}
-                </Col>
-              </Row>
-              <Row gutter={20} className='table'>
-                <Col className='title' span={6}>
-                  Join date:
-                </Col>
-                <Col className='content' span={18}>
-                  {accountDetail.joinDate}
-                </Col>
-              </Row>
-              {accountDetail.teacher && (
-                <>
-                  <Row gutter={20} className='table'>
-                    <Col className='title' span={6}>
-                      Completed rate:
-                    </Col>
-                    <Col className='content' span={18}>
-                      {`${accountDetail.teacher.completedRate}%`}
-                    </Col>
-                  </Row>
-                  <Row gutter={20} className='table'>
-                    <Col className='title' span={6}>
-                      Total job:
-                    </Col>
-                    <Col className='content' span={18}>
-                      {accountDetail.teacher.totalJob}
-                    </Col>
-                  </Row>
-                  <Row gutter={20} className='table'>
-                    <Col className='title' span={6}>
-                      Total Earned:
-                    </Col>
-                    <Col className='content' span={18}>
-                      {accountDetail.teacher.totalEarned}
-                    </Col>
-                  </Row>
-                  <Row gutter={20} className='table'>
-                    <Col className='title' span={6}>
-                      Hours worked:
-                    </Col>
-                    <Col className='content' span={18}>
-                      {accountDetail.teacher.hoursWorked}
-                    </Col>
-                  </Row>
-                </>
-              )}
-            </Col>
-          </Row>
+          <>
+            <Row gutter={20}>
+              <Col span={6}>
+                {!accountDetail.avatar && (
+                  <Avatar shape='square' size={80} icon='user' />
+                )}
+                {accountDetail.avatar && (
+                  <Avatar shape='square' size={80} src={accountDetail.avatar} />
+                )}
+              </Col>
+              <Col span={18}>
+                <Row gutter={20} className='table'>
+                  <Col className='title' span={6}>
+                    Id:
+                  </Col>
+                  <Col className='content' span={18}>
+                    {accountDetail._id}
+                  </Col>
+                </Row>
+                <Row gutter={20} className='table'>
+                  <Col className='title' span={6}>
+                    Name:
+                  </Col>
+                  <Col className='content' span={18}>
+                    {accountDetail.name}
+                  </Col>
+                </Row>
+                <Row gutter={20} className='table'>
+                  <Col className='title' span={6}>
+                    Role:
+                  </Col>
+                  <Col className='content' span={18}>
+                    {accountDetail.roleDisplay}
+                  </Col>
+                </Row>
+                <Row gutter={20} className='table'>
+                  <Col className='title' span={6}>
+                    Join date:
+                  </Col>
+                  <Col className='content' span={18}>
+                    {accountDetail.joinDate}
+                  </Col>
+                </Row>
+                {accountDetail.teacher && (
+                  <>
+                    <Row gutter={20} className='table'>
+                      <Col className='title' span={6}>
+                        Completed rate:
+                      </Col>
+                      <Col className='content' span={18}>
+                        {`${accountDetail.teacher.completedRate}%`}
+                      </Col>
+                    </Row>
+                    <Row gutter={20} className='table'>
+                      <Col className='title' span={6}>
+                        Total job:
+                      </Col>
+                      <Col className='content' span={18}>
+                        {accountDetail.teacher.totalJob}
+                      </Col>
+                    </Row>
+                    <Row gutter={20} className='table'>
+                      <Col className='title' span={6}>
+                        Total Earned:
+                      </Col>
+                      <Col className='content' span={18}>
+                        {accountDetail.teacher.totalEarned}
+                      </Col>
+                    </Row>
+                    <Row gutter={20} className='table'>
+                      <Col className='title' span={6}>
+                        Hours worked:
+                      </Col>
+                      <Col className='content' span={18}>
+                        {accountDetail.teacher.hoursWorked}
+                      </Col>
+                    </Row>
+                  </>
+                )}
+              </Col>
+            </Row>
+            {accountDetail.role !== Constance.ROLES.root && (
+              <div style={{ marginTop: 20 }}>
+                {accountDetail.isBlock === false && (
+                  <Button
+                    size='small'
+                    type='danger'
+                    onClick={() => onBlockUserClick(accountDetail._id)}
+                  >
+                    Block user
+                  </Button>
+                )}
+
+                {accountDetail.isBlock === true && (
+                  <Button
+                    size='small'
+                    type='primary'
+                    onClick={() => onBlockUserClick(accountDetail._id)}
+                  >
+                    Active user
+                  </Button>
+                )}
+              </div>
+            )}
+          </>
         )}
       </Modal>
     </>

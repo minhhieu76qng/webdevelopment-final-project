@@ -2,25 +2,31 @@ const router = require("express").Router();
 const httpCode = require("http-status-codes");
 const _ = require("lodash");
 const accountService = require("../../services/account.service");
-const { authorize } = require("../../middlewares/auth.mdw");
+const { authenticateAdmin, authorize } = require("../../middlewares/auth.mdw");
 const { ROLES } = require("../../constance/constance");
 
-router.post("/", authorize(ROLES.root), (req, res, next) => {
-  accountService
-    .createNewAdmin(req.body)
-    .then(result => {
-      return res.status(httpCode.CREATED).json({
-        _id: result._id,
-        name: result.name
+router.post(
+  "/",
+  authenticateAdmin(),
+  authorize(ROLES.root),
+  (req, res, next) => {
+    accountService
+      .createNewAdmin(req.body)
+      .then(result => {
+        return res.status(httpCode.CREATED).json({
+          _id: result._id,
+          name: result.name
+        });
+      })
+      .catch(err => {
+        return next(err);
       });
-    })
-    .catch(err => {
-      return next(err);
-    });
-});
+  }
+);
 
 router.get(
   "/",
+  authenticateAdmin(),
   authorize([ROLES.root, ROLES.admin]),
   async (req, res, next) => {
     let page = _.toInteger(req.query.page) || 1;
@@ -48,6 +54,7 @@ router.get(
 
 router.get(
   "/:id",
+  authenticateAdmin(),
   authorize([ROLES.admin, ROLES.root]),
   async (req, res, next) => {
     const { id } = req.params;
@@ -60,6 +67,25 @@ router.get(
       return res.status(httpCode.OK).json({
         account
       });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.put(
+  "/:id/block",
+  authenticateAdmin(),
+  authorize([ROLES.admin, ROLES.root]),
+  async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const { isUpdated } = await accountService.toggleBlockUser(
+        req.user._id,
+        id
+      );
+
+      return res.status(httpCode.OK).json({ isUpdated });
     } catch (err) {
       return next(err);
     }

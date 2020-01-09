@@ -367,9 +367,13 @@ module.exports = {
     });
   },
 
-  setBlock: async function(id, isBlock) {
+  toggleBlockUser: async function(yourAccountId, id) {
     if (!(id && mongoose.Types.ObjectId.isValid(id))) {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Account ID is not valid.");
+    }
+
+    if (_.toString(yourAccountId) === _.toString(id)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "You can't block yourself.");
     }
 
     const account = await accountRepo.findById(id);
@@ -377,10 +381,16 @@ module.exports = {
       throw new ErrorHandler(httpCode.BAD_REQUEST, "Account is not exist.");
     }
 
-    const result = await accountRepo.setBlock(id, isBlock);
-    return {
-      isUpdated: result.nModified === 1
-    };
+    if (account.role === ROLES.root) {
+      throw new ErrorHandler(
+        httpCode.FORBIDDEN,
+        "You cant not block ROOT user."
+      );
+    }
+
+    const result = await accountRepo.setBlock(id, !account.isBlock);
+
+    return { isUpdated: result.nModified === 1 };
   },
 
   setVerification: async function(id) {
