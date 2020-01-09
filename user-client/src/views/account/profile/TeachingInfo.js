@@ -24,6 +24,7 @@ const TeachingInfo = () => {
   const getMe = () => {
     Axios.get(`/api/user/teachers/me`)
       .then(({ data: { teacher } }) => {
+        console.log(teacher);
         setTeacherInfo(teacher);
       })
       .catch(err => {

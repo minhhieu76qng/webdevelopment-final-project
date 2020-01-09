@@ -32,11 +32,6 @@ module.exports = {
         }
       },
       {
-        $match: {
-          "tag_list.isDeleted": false
-        }
-      },
-      {
         $project: {
           _id: 1,
           completedRate: 1,
@@ -49,7 +44,8 @@ module.exports = {
           catId: 1,
           tag_list: {
             _id: 1,
-            name: 1
+            name: 1,
+            isDeleted: 1
           },
           firstUpdated: 1
         }

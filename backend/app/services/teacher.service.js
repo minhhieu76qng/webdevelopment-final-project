@@ -12,10 +12,16 @@ const { MIN_PRICE, MAX_PRICE } = require("../constance/constance");
 module.exports = {
   getTeacherTags: async function(accountId) {
     const arr = await teacherRepo.getTags(accountId);
+
     if (arr && _.isArray(arr) && arr.length > 0) {
       let result = { ...arr[0] };
+      if (_.isArray(result.tag_list)) {
+        result.tags = [...arr[0].tag_list];
+        console.log(result.tags);
+        result.tags = result.tags.filter(t => t.isDeleted === false);
+      }
       delete result.tag_list;
-      result.tags = [...arr[0].tag_list];
+
       return result;
     }
     return null;
