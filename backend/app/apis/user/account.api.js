@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const httpCode = require("http-status-codes");
+const _ = require("lodash");
 const accountService = require("../../services/account.service");
 const teacherService = require("../../services/teacher.service");
 const { ErrorHandler } = require("../../helpers/error.helper");
@@ -36,7 +37,7 @@ router.put(
   authorize([ROLES.student, ROLES.teacher]),
   async (req, res, next) => {
     const { id } = req.params;
-    if (id != req.user._id) {
+    if (_.toString(id) !== _.toString(req.user._id)) {
       return next(
         new ErrorHandler(
           httpCode.NOT_ACCEPTABLE,
@@ -68,7 +69,7 @@ router.put(
   authorize([ROLES.student, ROLES.teacher]),
   async (req, res, next) => {
     const { id } = req.params;
-    if (id != req.user._id) {
+    if (_.toString(id) !== _.toString(req.user._id)) {
       return next(
         new ErrorHandler(
           httpCode.NOT_ACCEPTABLE,
@@ -78,6 +79,33 @@ router.put(
     }
 
     await accountService.uploadAvatar(req, res);
+  }
+);
+
+router.put(
+  "/:id/change-password",
+  authenticateUser(),
+  authorize([ROLES.student, ROLES.teacher]),
+  async (req, res, next) => {
+    const { id } = req.params;
+    if (_.toString(id) !== _.toString(req.user._id)) {
+      return next(
+        new ErrorHandler(
+          httpCode.NOT_ACCEPTABLE,
+          "Your credentials and api are not valid!"
+        )
+      );
+    }
+
+    try {
+      const { isUpdated } = await accountService.settingChangePassword(
+        id,
+        req.body
+      );
+      return res.status(httpCode.OK).json({ isUpdated });
+    } catch (err) {
+      return next(err);
+    }
   }
 );
 

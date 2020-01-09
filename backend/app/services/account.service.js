@@ -444,6 +444,76 @@ module.exports = {
       );
     }
 
+    if (!account.local) {
+      throw new ErrorHandler(
+        httpCode.FORBIDDEN,
+        "Your account type can't change password."
+      );
+    }
+
+    // thay doi mat khau
+    const result = await accountRepo.changePassword(account._id, newPassword);
+
+    return { isUpdated: result.nModified === 1 };
+  },
+
+  settingChangePassword: async function(
+    accountId,
+    { current, newPassword, confirmPw }
+  ) {
+    if (!mongoose.Types.ObjectId.isValid(accountId)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account ID is not valid.");
+    }
+
+    // kiem tra password moi
+    if (
+      !(_.isString(current) && _.isString(newPassword) && _.isString(confirmPw))
+    ) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Password must be a string."
+      );
+    }
+
+    // match password
+    if (!(newPassword === confirmPw)) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Password not match.");
+    }
+
+    // tim kiem account
+    const account = await accountRepo.findById(accountId);
+
+    if (!account) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account is not exist.");
+    }
+
+    // kiem tra account co bi block hay verified chua
+    if (account.isBlock === true) {
+      throw new ErrorHandler(httpCode.BAD_REQUEST, "Account has been blocked.");
+    }
+
+    if (!(account.isVerified === true)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Account has not been verified."
+      );
+    }
+
+    if (!account.local) {
+      throw new ErrorHandler(
+        httpCode.FORBIDDEN,
+        "Your account type can't change password."
+      );
+    }
+
+    // kiem tra current password co dung hay khong
+    if (!accountHelper.comparePassword(current, account)) {
+      throw new ErrorHandler(
+        httpCode.BAD_REQUEST,
+        "Current password is not match."
+      );
+    }
+
     // thay doi mat khau
     const result = await accountRepo.changePassword(account._id, newPassword);
 

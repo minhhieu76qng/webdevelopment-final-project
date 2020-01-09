@@ -21,7 +21,7 @@ const UpdateIntro = () => {
       })
       .catch(err => {
         if (err && err.response && err.response.data.error) {
-          toast.error(err.response.data.error);
+          toast.error(err.response.data.error.msg);
         }
       });
   };
